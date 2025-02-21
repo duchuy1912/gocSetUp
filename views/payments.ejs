@@ -1,0 +1,178 @@
+<%- include('partials/header.ejs'); -%>
+
+
+    <style>
+        /* body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        padding: 20px;
+    } */
+        .payment-container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2,
+        h3 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .total-amount {
+            text-align: right;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .order-note textarea {
+            width: 100%;
+            height: 80px;
+            margin-top: 5px;
+        }
+
+        .confirm-payment {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .confirm-payment:hover {
+            background-color: #218838;
+        }
+    </style>
+
+    <form action="/payments-cart" method="post">
+        <div class="payment-container">
+            <h2>Thanh toán đơn hàng</h2>
+
+            <div class="user-info">
+                <h3>Thông tin người nhận</h3>
+                <p><strong>Họ và tên:</strong>
+                    <%= user.display_name %>
+                </p>
+                <p><strong>Số điện thoại:</strong>
+                    <%= userDetail.phone %>
+                </p>
+                <p><strong>Địa chỉ giao hàng:</strong>
+                    <%= userDetail.shipping_address %>
+                </p>
+            </div>
+
+            <div class="cart-items">
+                <h3>Sản phẩm</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tên sản phẩm</th>
+                            <th>Giá</th>
+                            <th>Số lượng</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% item.forEach(item=> { %>
+                            <input type="hidden" name="product_id[]" value="<%= item.product_id %>">
+                            <input type="hidden" name="quantity[]" class="quantity-hidden" value="<%= item.cart_quantity %>">
+                            <tr>
+                                <td>
+                                    <%= item.product_name %>
+                                </td>
+                                <td>
+                                    <%= Number(item.product_price).toLocaleString("vi-VN") %> VND
+                                </td>
+                                <td>
+                                    <%= item.cart_quantity %>
+                                </td>
+                                <td>
+                                    <%= Number(item.product_price * item.cart_quantity).toLocaleString("vi-VN") %> VND
+                                </td>
+                            </tr>
+                            <% }); %>
+                    </tbody>
+                </table>
+                <% let totalAmount=0; // Khởi tạo tổng tiền %>
+                    <% item.forEach(item=> { %>
+                        <% totalAmount +=item.product_price * item.cart_quantity; // Cộng dồn tổng tiền %>
+                            <% }); %>
+
+                                <h3 class="total-amount">Tổng tiền: <%= totalAmount.toLocaleString("vi-VN") %> VND</h3>
+
+            </div>
+
+            <div class="order-note">
+                <label for="note">Lời nhắn cho người bán:</label>
+                <textarea id="note" name="note"></textarea>
+            </div>
+
+            <div class="payment-methods">
+                <h3>Phương thức thanh toán</h3>
+                <label><input type="radio" name="payment_method" value="COD" checked onchange="togglePaymentDetails()">
+                    Thanh toán khi nhận hàng (COD)</label><br>
+                <label><input type="radio" name="payment_method" value="QR" onchange="togglePaymentDetails()"> Thanh
+                    toán qua mã QR</label><br>
+                <label><input type="radio" name="payment_method" value="BankTransfer" onchange="togglePaymentDetails()">
+                    Chuyển khoản ngân hàng</label>
+            </div>
+
+            <!-- Hình ảnh QR Code (ẩn mặc định) -->
+            <div id="qr-image" class="payment-detail" style="display: none; margin-top: 10px;">
+                <h4>Quét mã QR để thanh toán:</h4>
+                <p style="color: red;">Chú ý : Điền <b>Email</b> vào phần nội dung chuyển khoản </p>
+                <img src="/img/b35c043b-dd13-4368-8b5e-179a85970b4324.jpg" alt="QR Code"
+                    style="width: 200px; height: auto;">
+            </div>
+
+            <!-- Thông tin chuyển khoản (ẩn mặc định) -->
+            <div id="bank-transfer-info" class="payment-detail" style="display: none; margin-top: 10px;">
+                <h4>Thông tin chuyển khoản:</h4>
+                <p style="color: red;">Chú ý : Điền <b>Email</b> vào phần nội dung chuyển khoản </p>
+                <p>Ngân hàng: Vietcombank</p>
+                <p>Số tài khoản: 1022763928</p>
+                <p>Chủ tài khoản: MAI DUC HUY</p>
+            </div>
+
+            <button type="submit" class="confirm-payment">Xác nhận thanh toán</button>
+        </div>
+
+    </form>
+
+
+
+    <script>
+        function togglePaymentDetails() {
+            let paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+
+            document.getElementById("qr-image").style.display = (paymentMethod === "QR") ? "block" : "none";
+            document.getElementById("bank-transfer-info").style.display = (paymentMethod === "BankTransfer") ? "block" : "none";
+        }
+    </script>
+
+    <%- include('partials/footer.ejs'); -%>

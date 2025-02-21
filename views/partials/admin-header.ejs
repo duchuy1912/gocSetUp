@@ -1,0 +1,95 @@
+<style>
+    .admin-container {
+        display: flex;
+        min-height: 100vh;
+        /* Chiều cao tối thiểu bằng 100% viewport */
+    }
+
+    .admin-sidebar {
+        width: 250px;
+        /* Độ rộng sidebar */
+        background-color: #2c3e50;
+        /* Màu nền sidebar */
+        color: white;
+        /* Màu chữ */
+        padding: 20px;
+        position: fixed;
+        /* Cố định sidebar */
+        height: 100vh;
+        /* Chiều cao toàn màn hình */
+        top: 0;
+        left: 0;
+        overflow-y: auto;
+        /* Cho phép cuộn khi nội dung dài */
+    }
+
+    .admin-sidebar h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .admin-sidebar ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .admin-sidebar ul li {
+        margin: 15px 0;
+    }
+
+    .admin-sidebar ul li a {
+        text-decoration: none;
+        color: white;
+        display: block;
+        padding: 10px;
+        border-radius: 5px;
+        transition: background 0.3s ease;
+        font-size: 20px;
+    }
+
+    .admin-sidebar ul li a:hover {
+        background: #34495e;
+        /* Màu khi hover */
+    }
+
+    .admin-main {
+        margin-left: 270px;
+        /* Dịch phải để tránh bị che bởi sidebar */
+        padding: 20px;
+        flex-grow: 1;
+    }
+
+    .back-button {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.3s ease;
+    }
+
+    .back-button:hover {
+        background-color: #c0392b;
+    }
+</style>
+<title>Góc Setup Admin </title>
+<div class="admin-container">
+    <aside class="admin-sidebar">
+        <!-- <a  onclick="history.back()" class="back-link" href="/">Home <ion-icon name="home-sharp"></ion-icon></a> -->
+        <a style="text-decoration: none;background-color: #3498db;" class="back-button" href="/">Home <ion-icon name="home-sharp"></ion-icon></a>
+        <h2>Quản lý</h2>
+        <ul>
+            <!-- <li><a href="/admin/add-product">Thêm sản phẩm</a></li> -->
+            <!-- <li><a href="/admin/add-combo">Thêm combo</a></li> -->
+            <li><a href="/admin/products">Quản lý sản phẩm</a></li>
+            <li><a href="/admin/combos">Quản lý Combo</a></li>
+            <li><a href="/admin-information">Quản lý tài khoản </a></li>
+            <li><a href="/admin-purchase-history">Quản lý đơn hàng  </a></li>
+            <!-- <li><a href="/admin/reports">Báo cáo</a></li> -->
+        </ul>
+        
+    </aside>

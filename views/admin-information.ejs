@@ -1,0 +1,161 @@
+<%- include('partials/admin-header.ejs'); -%>
+    <style>
+        .information-container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .information-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .information-section-title {
+            font-size: 20px;
+            margin-top: 20px;
+            color: #007bff;
+        }
+
+        /* Bảng danh sách */
+        .information-user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .information-user-table th,
+        .information-user-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .information-user-table th {
+            background: #007bff;
+            color: #fff;
+        }
+
+        .information-user-table tr:nth-child(even) {
+            background: #f2f2f2;
+        }
+
+        /* Hàng của Admin và User */
+        .information-admin-row {
+            background: #f8d7da;
+        }
+
+        .information-user-row {
+            background: #d4edda;
+        }
+
+        /* Nút bấm */
+        .information-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .information-btn-danger {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .information-btn-danger:hover {
+            background: #c82333;
+        }
+
+        .information-btn-primary {
+            background: #007bff;
+            color: #fff;
+        }
+
+        .information-btn-primary:hover {
+            background: #0056b3;
+        }
+    </style>
+    <div class="information-container">
+        <h2 class="information-title">Quản lý người dùng</h2>
+
+        <h3 class="information-section-title">Danh sách Admin</h3>
+        <table class="information-user-table">
+            <tr>
+                <th>ID</th>
+                <th>Tên hiển thị</th>
+                <th>Email</th>
+                <th>Ngày tạo</th>
+                <th>Hành động</th>
+            </tr>
+            <% users.forEach(user=> { %>
+                <% if (user.role==="admin" ) { %>
+                    <tr class="information-admin-row">
+                        <td>
+                            <%= user.id %>
+                        </td>
+                        <td>
+                            <%= user.display_name %>
+                        </td>
+                        <td>
+                            <%= user.email %>
+                        </td>
+                        <td>
+                            <%= new Date(user.created_at).toLocaleDateString() %>
+                        </td>
+                        <td>
+                            <form action="/change-role" method="POST">
+                                <input type="hidden" name="userId" value="<%= user.id %>">
+                                <input type="hidden" name="newRole" value="user">
+                                <button type="submit" class="information-btn information-btn-danger">Hạ xuống
+                                    User</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <% } %>
+                        <% }) %>
+        </table>
+
+        <h3 class="information-section-title">Danh sách User</h3>
+        <table class="information-user-table">
+            <tr>
+                <th>ID</th>
+                <th>Tên hiển thị</th>
+                <th>Email</th>
+                <th>Ngày tạo</th>
+                <th>Hành động</th>
+            </tr>
+            <% users.forEach(user=> { %>
+                <% if (user.role==="user" ) { %>
+                    <tr class="information-user-row">
+                        <td>
+                            <%= user.id %>
+                        </td>
+                        <td>
+                            <%= user.display_name %>
+                        </td>
+                        <td>
+                            <%= user.email %>
+                        </td>
+                        <td>
+                            <%= new Date(user.created_at).toLocaleDateString() %>
+                        </td>
+                        <td>
+                            <form action="/change-role" method="POST">
+                                <input type="hidden" name="userId" value="<%= user.id %>">
+                                <input type="hidden" name="newRole" value="admin">
+                                <button type="submit" class="information-btn information-btn-primary">Nâng lên
+                                    Admin</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <% } %>
+                        <% }) %>
+        </table>
+    </div>
+
+    <%- include('partials/admin-footer.ejs'); -%>

@@ -1,0 +1,62 @@
+<%- include('partials/header.ejs'); -%>
+
+<style>
+    /* body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        padding: 20px;
+        text-align: center;
+    } */
+    .success-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 80vh;
+        max-width: 500px;
+        /* align-items: center; */
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .success-icon {
+        font-size: 50px;
+        color: #28a745;
+    }
+    .success-message {
+        font-size: 1.5em;
+        margin-top: 10px;
+    }
+    .order-details {
+        margin-top: 15px;
+        text-align: left;
+    }
+    .order-details p {
+        margin: 5px 0;
+    }
+    .back-home {
+        display: inline-block;
+        /* margin-top: 20px; */
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 50%;
+        font-size: 1em;
+    }
+    .back-home:hover {
+        background-color: #0056b3;
+    }
+</style>
+<div class="success-container">
+    <a href="/">
+        <div class="success-icon"><ion-icon name="wallet"></ion-icon></div>
+        
+    </a>
+    <h2 class="success-message">Đặt hàng thành công!</h2>
+    
+</div>
+
+
+<%- include('partials/footer.ejs'); -%>

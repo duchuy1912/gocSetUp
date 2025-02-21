@@ -1,0 +1,167 @@
+<%- include('partials/header.ejs'); -%>
+    <style>
+        .what-is-style {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .what-is-style h1 {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .setup-style {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .setup-style h2 {
+            font-size: 1.6em;
+            margin-bottom: 15px;
+        }
+
+        .setup-style img {
+            width: 100%;
+            max-width: 600px;
+            height: 350px;
+            /* Đồng bộ chiều cao */
+            object-fit: cover;
+            /* Cắt hình ảnh để vừa khung */
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .setup-style p {
+            font-size: 1.1em;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .setup-style ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .setup-style ul li {
+            font-size: 1em;
+            line-height: 1.6;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .setup-style ul li::before {
+            /* content: "✔"; */
+            color: #4CAF50;
+            position: absolute;
+            left: 0;
+        }
+
+        @media (max-width: 768px) {
+            .setup-style img {
+                height: auto;
+                max-width: 100%;
+            }
+        }
+    </style>
+    <main class="what-is-style">
+        <h1>Các Phong Cách Setup Bàn Làm Việc</h1>
+        <p style="text-align: center;">Dưới đây là giải thích công dụng của từng Combo, giúp bạn hiểu rõ hơn từng bộ setup
+            phù hợp với nhu cầu nào.</p>
+
+        <section class="setup-style">
+            <h2>1️⃣ Combo Setup Tối Giản (Minimalist Setup)</h2>
+            <img src="/img/minimalist-setup-la-gi-tips-de-tao-mot-ban-lam-viec-phong-cach-toi-gian-mua-dich-376.jpg"
+                alt="Minimalist Setup">
+            <p><strong>Công dụng:</strong></p>
+            <ul>
+                <li>Phù hợp với những ai thích không gian sạch sẽ, gọn gàng.</li>
+                <li>Loại bỏ các yếu tố thừa, tập trung vào công năng và hiệu suất.</li>
+                <li>Không dây tối đa giúp bàn làm việc trông thoáng và tinh tế hơn.</li>
+                <li>Màn hình viền mỏng giúp mở rộng không gian nhìn, giảm căng thẳng mắt.</li>
+                <li>Chuột & bàn phím không dây giúp tối ưu hóa trải nghiệm làm việc di động.</li>
+                <li>Loa nhỏ gọn nhưng đủ dùng cho công việc và giải trí nhẹ nhàng.</li>
+            </ul>
+            <p><strong>Dành cho:</strong>Thích sự tối giản,work-from-home</p>
+
+        </section>
+
+        <section class="setup-style">
+            <h2>2️⃣ Combo Setup Gaming Cao Cấp</h2>
+            <img src="/img/purple-gaming-set-up-1.jpg.webp" alt="Gaming Setup">
+            <p><strong>Công dụng:</strong></p>
+            <ul>
+                <li>Phục vụ gaming chuyên nghiệp với tốc độ phản hồi nhanh, hình ảnh mượt mà.</li>
+                <li>Bàn nâng hạ giúp giảm mỏi lưng khi chơi game lâu.</li>
+                <li>Ghế gaming với thiết kế công thái học giúp thoải mái và bảo vệ cột sống.</li>
+                <li>Màn hình tần số quét cao (165Hz) giúp chuyển động mượt, tránh hiện tượng giật lag.</li>
+                <li>Bàn phím cơ cảm giác gõ tốt, đèn RGB tùy chỉnh giúp trải nghiệm game tối ưu.</li>
+                <li>Chuột gaming siêu nhẹ, tốc độ phản hồi nhanh giúp aim chính xác hơn.</li>
+                <li>Tai nghe hỗ trợ âm thanh vòm giúp xác định vị trí địch trong game FPS.</li>
+                <li>Loa gaming có hiệu ứng RGB tăng cảm giác nhập vai.</li>
+            </ul>
+            
+            <p><strong>Dành cho:</strong> Game thủ, streamer.</p>
+        </section>
+
+        <section class="setup-style">
+            <h2>3️⃣ Combo Setup Làm Việc Hiệu Suất Cao</h2>
+            <img src="/img/setup-goc-lam-viec-tao-nen-khong-gian-sang-tao-va-hieu-qua-66dc164e2442b.jpg"
+                alt="Productivity Setup">
+            <p><strong>Công dụng:</strong></p>
+            <ul class="productivity-list">
+                <li>Thiết kế dành riêng cho người làm việc lâu dài trên máy tính.</li>
+                <li>Bàn nâng hạ giúp thay đổi tư thế làm việc, giảm đau lưng & cổ.</li>
+                <li>Ghế công thái học cao cấp giúp tăng sự thoải mái và hỗ trợ lưng.</li>
+                <li>Màn hình lớn 4K giúp làm việc đa nhiệm dễ dàng, mở nhiều cửa sổ cùng lúc.</li>
+                <li>Chuột MX Master 3S có thể chuyển đổi nhanh giữa nhiều máy tính, hỗ trợ thao tác nhanh.</li>
+                <li>Bàn phím không dây, gõ êm giúp tránh gây tiếng ồn trong không gian văn phòng.</li>
+                <li>Loa có âm thanh trung thực, giúp hỗ trợ gọi điện, họp online, nghe nhạc thư giãn.</li>
+                <li>Phụ kiện hỗ trợ như đế kê chân, giá đỡ màn hình giúp giảm áp lực cổ tay và chân.</li>
+            </ul>
+            
+            <p><strong>Dành cho:</strong> Lập trình viên, designer.</p>
+        </section>
+
+        <section class="setup-style">
+            <h2>4️⃣ Combo Setup Studio & Sáng Tạo Nội Dung</h2>
+            <img src="/img/setup-sang-tao-noidung.jpg" alt="Studio Setup">
+            <p><strong>Công dụng:</strong></p>
+            <ul class="content-creator-list">
+                <li>Phù hợp với người làm sáng tạo nội dung, như YouTuber, streamer, editor video, designer.</li>
+                <li>Màn hình chuẩn màu cao (5K Retina) giúp chỉnh sửa ảnh, video chính xác.</li>
+                <li>Micro thu âm chuyên nghiệp giúp lọc âm tốt, giọng nói rõ ràng khi thu âm hoặc livestream.</li>
+                <li>Loa monitor studio giúp nghe nhạc, mix nhạc với âm thanh trung thực.</li>
+                <li>Đèn LED hỗ trợ ánh sáng tốt khi quay video, livestream.</li>
+                <li>Ghế công thái học cao cấp giúp làm việc thoải mái trong thời gian dài.</li>
+                <li>Bàn nâng hạ giúp giảm căng thẳng cột sống khi ngồi chỉnh sửa video lâu.</li>
+            </ul>
+            
+            <p><strong>Dành cho:</strong> YouTuber, streamer, editor.</p>
+        </section>
+
+        <section class="setup-style">
+            <h2>5️⃣ Combo Setup Đa Năng Cho Sinh Viên & Văn Phòng</h2>
+            <img src="/img/tai_nguyen_page2_8_480x480.webp" alt="Student Setup">
+            <p><strong>Công dụng:</strong></p>
+            <ul class="student-setup-list">
+                <li>Combo tiết kiệm chi phí nhưng vẫn đáp ứng đầy đủ nhu cầu học tập & làm việc.</li>
+                <li>Bàn nhỏ gọn, phù hợp không gian nhỏ như ký túc xá, phòng trọ, văn phòng.</li>
+                <li>Ghế công thái học giá rẻ nhưng vẫn hỗ trợ lưng và cột sống.</li>
+                <li>Màn hình 24 inch đủ dùng cho học tập, làm việc và giải trí nhẹ.</li>
+                <li>Bàn phím nhỏ gọn, kết nối Bluetooth dễ dàng giữa laptop, máy tính bảng, điện thoại.</li>
+                <li>Chuột không dây yên tĩnh giúp tránh gây tiếng ồn khi học nhóm, làm việc.</li>
+                <li>Tai nghe chống ồn giúp tập trung học tập ngay cả trong môi trường ồn ào.</li>
+                <li>Loa nhỏ gọn giúp nghe nhạc thư giãn hoặc họp online.</li>
+            </ul>
+            
+            <p><strong>Dành cho:</strong> Sinh viên, nhân viên văn phòng.</p>
+        </section>
+        <a onclick="history.back()" class="back-link" href="javascript:void(0);">← Quay lại</a>
+    </main>
+    <%- include('partials/footer.ejs'); -%>

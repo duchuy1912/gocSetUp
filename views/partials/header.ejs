@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Góc Setup</title>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <style>
+        /* Tổng quan */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            /* margin: 0;
+            padding: 0; */
+            background-color: #f4f4f4;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+            /* Đẩy footer xuống dưới khi nội dung ít */
+            padding: 110px;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #222;
+            color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            height: 44px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 20px 0;
+            display: flex;
+            justify-content: center;
+            background: #444;
+            margin: 0;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease-in-out;
+        }
+
+        nav ul li a:hover {
+            color: #ffcc00;
+        }
+
+        /* Banner */
+        .banner img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        /* Danh mục sản phẩm */
+        .shop-container {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            align-items: flex-start;
+        }
+
+        /* Danh mục bên trái */
+        .categories {
+            width: 250px;
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .categories h3 {
+            text-align: center;
+        }
+
+        .categories ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .categories li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .categories a {
+            text-decoration: none;
+            color: black;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .categories a:hover {
+            color: #ff6600;
+        }
+
+        /* Danh sách sản phẩm bên phải */
+        .products-container {
+            flex-grow: 1;
+            width: 100%;
+        }
+
+        .product-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: flex-start;
+            
+            /* Căn trái */
+        }
+
+        /* Sản phẩm */
+        .product {
+            width: 200px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .product img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .product p {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        /* Button */
+
+        /* button, */
+        .product button {
+            padding: 10px;
+            background: #ffcc00;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        /* button:hover, */
+        .product button:hover {
+            background: #e6b800;
+        }
+
+        .product:hover {
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 10px;
+            background: #222;
+            color: white;
+            margin-top: 20px;
+        }
+
+        /* Icons */
+        .icons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icons a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        /* .icons a:hover {
+            color: #ffcc00;
+        } */
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropbtn img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #222;
+            min-width: 160px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            padding: 10px;
+            right: 0;
+        }
+
+        .dropdown-content p {
+            margin: 10px 0;
+        }
+
+        .dropdown-content a {
+            display: block;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 5px 0;
+        }
+
+        .dropdown-content a:hover {
+            background: #ee0000;
+            border-radius: 5px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+
+
+
+
+        .product-detail .container {
+            display: flex;
+            gap: 30px;
+            padding: 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .product-images {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #main-image {
+            width: 400px;
+            height: 400px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: 0.3s ease-in-out;
+        }
+
+        .thumbnail-list {
+            display: flex;
+            /* overflow-x: auto; */
+            /* max-width: 100%; */
+            gap: 10px;
+        }
+
+        .thumbnail {
+            width: 80px;
+            height: auto;
+            /* object-fit: cover; */
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: 0.3s;
+        }
+
+        .thumbnail:hover {
+            border-color: #007bff;
+            transform: scale(1.1);
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .price {
+            font-size: 1.5rem;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .buttons {
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 18px;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .add-to-cart {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .buy-now {
+            background-color: #e67e22;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #3498db;
+            font-weight: bold;
+        }
+
+
+        /* Định dạng phần combo chi tiết */
+        .combo-detail {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .combo-detail h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .combo-detail img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .combo-detail p {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+
+        .combo-detail p strong {
+            color: #ff6600;
+        }
+
+        /* Danh sách sản phẩm trong combo */
+        .combo-detail ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+        }
+
+        .combo-detail ul li {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #f9f9f9;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .combo-detail ul li img {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            margin-right: 40px;
+        }
+
+        /* Nút mua hàng */
+        .combo-detail button {
+            background: #ff6600;
+            color: white;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        .combo-detail button:hover {
+            background: #cc5200;
+        }
+
+        /* Link quay lại */
+        .combo-detail a {
+            display: block;
+            margin-top: 10px;
+            font-size: 16px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        #search-box {
+            width: 100%;
+            max-width: 300px;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .search-container button {
+            padding: 10px 15px;
+            font-size: 1rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .search-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <a href="/" class="logo"><ion-icon name="home-sharp"></ion-icon> Góc Setup</a>
+        <!-- <input type="text" placeholder="Tìm kiếm sản phẩm..."> -->
+        <div class="icons">
+            <a href="/cart">🛒 Giỏ hàng</a>
+
+            <% if (user) { %>
+                <!-- Nếu đã đăng nhập, hiển thị dropdown -->
+                <div class="dropdown">
+                    <% let avatar=user && user.avatar ? user.avatar : "/img/anh1.jpg" ; %>
+                        <button class="dropbtn">
+                            <img src="<%= avatar %>" alt="User Avatar">
+                            <p style="color: #fff;">
+                                <%= user ? user.display_name : 'Người dùng' %>
+                            </p>
+                        </button>
+
+                        <div class="dropdown-content">
+                            <a href="/information-detail"><ion-icon style="margin-right: 5px;" name="person-outline"></ion-icon>Thông tin
+                                cá nhân </a>
+                            <a href="/purchase-history"><ion-icon style="margin-right: 5px;" name="bag-outline"></ion-icon>Đơn mua </a>
+                            <% if(user.role=="admin" ){ %>
+                                <a href="/admin"><ion-icon style="margin-right: 5px;"
+                                        name="server-outline"></ion-icon>Quản lý</a>
+                                <% } %>
+                                    <a href="/logout"><ion-icon style="margin-right: 5px;"
+                                            name="log-in-outline"></ion-icon>Đăng xuất</a>
+                        </div>
+                </div>
+                <% } else { %>
+                    <!-- Nếu chưa đăng nhập, hiển thị nút đăng nhập -->
+                    <a href="/login">🔑 Đăng nhập</a>
+                    <% } %>
+        </div>
+    </header>

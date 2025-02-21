@@ -1,0 +1,120 @@
+<%- include('partials/header.ejs'); -%>
+
+    <style>
+        .purchase-history-body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            text-align: center;
+            padding: 20px;
+            min-height: 75vh;
+        }
+
+        .purchase-history-title {
+            color: #333;
+        }
+
+        .purchase-history-table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+            background: #fff;
+        }
+
+        .purchase-history-header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+        }
+
+        .purchase-history-row:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .purchase-history-data {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .purchase-history-button {
+            text-decoration: none;
+            padding: 5px 10px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .purchase-history-button:hover {
+            background-color: #218838;
+        }
+    </style>
+    <div class="purchase-history-body">
+
+
+        <h1 class="purchase-history-title">Lịch sử mua hàng</h1>
+
+        <table class="purchase-history-table" border="1">
+            <thead>
+                <tr>
+                    <th class="purchase-history-header">ID</th>
+                    <th class="purchase-history-header">Tổng tiền</th>
+                    <th class="purchase-history-header">Trạng thái</th>
+                    <th class="purchase-history-header">Ngày Mua</th>
+                    <th class="purchase-history-header">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (purchases.length> 0) { %>
+                    <% purchases.sort((a, b)=> new Date(b.created_at) - new Date(a.created_at)); %>
+                        <% purchases.forEach(purchase=> { %>
+                            <tr class="purchase-history-row">
+                                <td class="purchase-history-data">
+                                    <%= purchase.id %>
+                                </td>
+                                <td class="purchase-history-data">
+                                    <%= Number(purchase.total_price).toLocaleString('vi-VN', { style: 'currency' ,
+                                        currency: 'VND' }) %>
+                                </td>
+                                <td class="purchase-history-data">
+                                    <% if (purchase.status==='pending' ) { %>
+                                        Chờ xử lý
+                                        <% } else if (purchase.status==='processing' ) { %>
+                                            Đang xử lý
+                                            <% } else if (purchase.status==='shipped' ) { %>
+                                                Đang giao hàng
+                                                <% } else if (purchase.status==='completed' ) { %>
+                                                    Hoàn thành
+                                                    <% } else if (purchase.status==='canceled' ) { %>
+                                                        Đã hủy
+                                                        <% } else { %>
+                                                            <%= purchase.status %>
+                                                                <% } %>
+                                </td>
+                                <td class="purchase-history-data">
+                                    <%= new Date(purchase.created_at).toLocaleString('vi-VN') %>
+                                        <% const daysAgo=Math.floor((Date.now() - new Date(purchase.created_at)) / (1000
+                                            * 60 * 60 * 24)); if (daysAgo> 0) {
+                                            %>
+                                            (<%= daysAgo %> ngày trước)
+                                                <% } %>
+                                </td>
+
+
+                                <td class="purchase-history-data">
+                                    <a href="/purchase-history-detail/<%= purchase.id %>"
+                                        class="purchase-history-button">Xem chi
+                                        tiết</a>
+                                </td>
+                            </tr>
+                            <% }) %>
+                                <% } else { %>
+                                    <tr class="purchase-history-row">
+                                        <td class="purchase-history-data" colspan="5">Không có dữ liệu</td>
+                                    </tr>
+                                    <% } %>
+            </tbody>
+        </table>
+        <a onclick="history.back()" class="back-link" href="javascript:void(0);">← Quay lại</a>
+    </div>
+
+    <%- include('partials/footer.ejs'); -%>

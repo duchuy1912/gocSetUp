@@ -1,0 +1,41 @@
+<%- include('partials/header.ejs'); -%>
+    <main class="combo-detail">
+        <form action="/payment-combo" method="post">
+            <h1>
+                <%= combo.name %>
+            </h1>
+            <input type="hidden" name="combo_id" value="<%= combo.id %>" id="">
+            <img src="<%= combo.image %>" alt="Combo Image">
+            <p><strong>Mô tả:</strong>
+                <%= combo.description %>
+            </p>
+
+            <h2>Sản phẩm trong combo</h2>
+            <ul>
+                <% products.forEach(p=> { %>
+                    <li>
+                        <img src="<%= p.image %>" alt="<%= p.name %>" width="50">
+                        <strong>
+                            <%= p.name %>
+                        </strong>
+                        <%= p.quantity %> cái
+                            (<%= Number(p.price).toLocaleString("vi-VN") %> VNĐ)
+                    </li>
+                    <% }); %>
+            </ul>
+            <p><strong>Giá gốc:</strong> <del>
+                    <%= Number((combo.price / (1 - combo.discount / 100))).toLocaleString("vi-VN") %> VNĐ
+                </del></p>
+            <p><strong>Giảm giá:</strong>
+                <%= combo.discount %> %
+            </p>
+            <p><strong>Giá sau giảm:</strong>
+                <%= Number(combo.price).toLocaleString("vi-VN") %> VNĐ
+            </p>
+            <button type="submit" class="buy-button">🛒 Mua Combo - Chỉ <%= Number(combo.price).toLocaleString("vi-VN") %>
+                    VNĐ</button>
+
+            <a onclick="history.back()" class="back-link" href="javascript:void(0);">← Quay lại</a>
+        </form>
+    </main>
+    <%- include('partials/footer.ejs'); -%>

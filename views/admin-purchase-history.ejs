@@ -1,0 +1,155 @@
+<%- include('partials/admin-header.ejs'); -%>
+    <style>
+        /* .admin-purchase-body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        text-align: center;
+        padding: 20px;
+    } */
+        .admin-purchase-title {
+            color: #333;
+        }
+
+        .admin-purchase-table {
+            width: 90%;
+            margin: auto;
+            border-collapse: collapse;
+            background: #fff;
+        }
+
+        .admin-purchase-header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .admin-purchase-row:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .admin-purchase-data {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .admin-purchase-select {
+            padding: 5px;
+        }
+
+        .admin-purchase-button {
+            padding: 5px 10px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .admin-purchase-button:hover {
+            background-color: #218838;
+        }
+
+        .purchase-history-button {
+            text-decoration: none;
+            padding: 8px 12px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            display: inline-block;
+            text-align: center;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .purchase-history-button:hover {
+            background-color: #218838;
+        }
+    </style>
+<div class="admin-main">
+    <h1 style="text-align: center;" class="admin-purchase-title">Quản lý Lịch sử Mua hàng</h1>
+
+    <% 
+    const groupedOrders = {
+        'pending': [],
+        'processing': [],
+        'shipped': [],
+        'completed': [],
+        'canceled': []
+    };
+
+    purchases.forEach(purchase => {
+        if (groupedOrders.hasOwnProperty(purchase.status)) {
+            groupedOrders[purchase.status].push(purchase);
+        }
+    });
+
+    const statusTitles = {
+        'pending': 'Chờ xử lý',
+        'processing': 'Đang xử lý',
+        'shipped': 'Đang giao',
+        'completed': 'Hoàn thành',
+        'canceled': 'Đã hủy'
+    };
+
+    for (let status in groupedOrders) {
+        groupedOrders[status].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        if (groupedOrders[status].length > 0) { 
+    %>
+        <h3 style="text-align: center;" class="admin-section-title">Đơn hàng <%= statusTitles[status] %></h3>
+        <table class="admin-purchase-table" border="1">
+            <thead>
+                <tr>
+                    <th class="admin-purchase-header">Tên</th>
+                    <th class="admin-purchase-header">Số điện thoại</th>
+                    <th class="admin-purchase-header">Địa chỉ giao hàng</th>
+                    <th class="admin-purchase-header">Tổng tiền</th>
+                    <th class="admin-purchase-header">Trạng thái</th>
+                    <th class="admin-purchase-header">Email</th>
+                    <th class="admin-purchase-header">PTTT</th>
+                    <th class="admin-purchase-header">Ghi chú</th>
+                    <th class="admin-purchase-header">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% groupedOrders[status].forEach(purchase => { %>
+                    <tr class="admin-purchase-row">
+                        <td class="admin-purchase-data"><%= purchase.display_name %></td>
+                        <td class="admin-purchase-data"><%= purchase.phone %></td>
+                        <td class="admin-purchase-data"><%= purchase.shipping_address %></td>
+                        <td class="admin-purchase-data">
+                            <%= Number(purchase.total_price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) %>
+                        </td>
+                        <td class="admin-purchase-data">
+                            <form action="/admin/update-status" method="POST">
+                                <input type="hidden" name="order_id" value="<%= purchase.order_id %>">
+                                <select name="status" class="admin-purchase-select">
+                                    <% for (let key in statusTitles) { %>
+                                        <option value="<%= key %>" <%= purchase.status === key ? 'selected' : '' %>>
+                                            <%= statusTitles[key] %>
+                                        </option>
+                                    <% } %>
+                                </select>
+                                <button type="submit" class="admin-purchase-button">Cập nhật</button>
+                            </form>
+                        </td>
+                        <td class="admin-purchase-data"><%= purchase.email %></td>
+                        <td class="admin-purchase-data"><%= purchase.payment_method %></td>
+                        <td class="admin-purchase-data"><%= purchase.note %></td>
+                        <td class="admin-purchase-data">
+                            <a href="/purchase-history-detail/<%= purchase.order_id %>" class="purchase-history-button">
+                                Xem chi tiết
+                            </a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } } %>
+
+    <% if (purchases.length === 0) { %>
+        <p style="text-align: center;">Không có đơn hàng nào.</p>
+    <% } %>
+</div>
+    <%- include('partials/admin-footer.ejs'); -%>

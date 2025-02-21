@@ -1,0 +1,78 @@
+<%- include('partials/header.ejs'); -%>
+<style>
+    .order-detail-body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        text-align: center;
+        padding: 20px;
+        min-height: 75vh;
+    }
+    .order-detail-title {
+        color: #333;
+    }
+    .order-detail-table {
+        width: 80%;
+        margin: auto;
+        border-collapse: collapse;
+        background: #fff;
+    }
+    .order-detail-header {
+        background-color: #007bff;
+        color: white;
+        padding: 10px;
+        text-align: center;
+    }
+    .order-detail-row:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    .order-detail-data {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+    .order-detail-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+</style>
+<div class="order-detail-body">
+    <h1 class="order-detail-title">Chi tiết đơn hàng</h1>
+    
+    <table class="order-detail-table" border="1">
+        <thead>
+            <tr>
+                <th class="order-detail-header">ID</th>
+                <th class="order-detail-header">Tên sản phẩm</th>
+                <!-- <th class="order-detail-header">Mô tả</th> -->
+                <th class="order-detail-header">Giá</th>
+                <th class="order-detail-header">Hình ảnh</th>
+                <!-- <th class="order-detail-header">Mã danh mục</th> -->
+                <th class="order-detail-header">Số lượng</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (orderItems.length > 0) { %>
+                <% orderItems.forEach(item => { %>
+                    <tr class="order-detail-row">
+                        <td class="order-detail-data"><%= item.order_item_id %></td>
+                        <td class="order-detail-data"><%= item.product_name %></td>
+                        <!-- <td class="order-detail-data"></td> -->
+                        <td class="order-detail-data"><%= Number(item.order_item_price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) %></td>
+                        <td class="order-detail-data">
+                            <img src="<%= item.product_image %>" alt="<%= item.product_name %>" class="order-detail-image">
+                        </td>
+                        <td class="order-detail-data"><%= item.order_item_quantity %></td>
+                    </tr>
+                <% }) %>
+            <% } else { %>
+                <tr class="order-detail-row">
+                    <td class="order-detail-data" colspan="7">Không có dữ liệu</td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+    <a onclick="history.back()" class="back-link" href="javascript:void(0);">← Quay lại</a>
+</div>
+<%- include('partials/footer.ejs'); -%>

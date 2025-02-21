@@ -1,0 +1,324 @@
+<%- include('partials/admin-header.ejs'); -%>
+    <style>
+        .admin-main {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+            width: 80%;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            /* flex-grow: 1; */
+        }
+
+        h1,
+        h3 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input,
+        textarea,
+        select {
+            padding: 10px;
+            /* width: 100%; */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #product-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .product-item label {
+            flex-grow: 2;
+            /* Tăng diện tích cho tên sản phẩm */
+            font-size: 16px;
+            /* Tăng kích thước chữ */
+        }
+
+        .product-item input[type="checkbox"] {
+            flex-grow: 0;
+            transform: scale(1.2);
+            /* Tăng kích thước checkbox */
+            margin-left: 10px;
+        }
+
+        .product-item input[type="number"] {
+            width: 60px;
+            /* Giới hạn chiều rộng input số lượng */
+            text-align: center;
+        }
+
+
+        ul#selected-products {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        ul#selected-products li {
+            background: #e9ecef;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .price-summary {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .price-summary p {
+            margin: 5px 0;
+            font-weight: bold;
+        }
+
+        .price-summary input {
+            width: 80px;
+            text-align: center;
+            font-size: 16px;
+        }
+    </style>
+    <main class="admin-main">
+        <h1>Chỉnh Sửa Combo</h1>
+
+        <form action="/admin/edit-combo/<%= combo.id %>" method="POST" enctype="multipart/form-data">
+            <label for="name">Tên Combo:</label>
+            <input type="text" id="name" name="name" value="<%= combo.name %>" required>
+
+            <label for="description">Mô tả:</label>
+            <textarea id="description" name="description"><%= combo.description %></textarea>
+
+            <label for="image">Ảnh Combo:</label>
+            <input type="file" id="image" name="image" accept="image/*">
+            <% if (combo.image) { %>
+                <p>Ảnh hiện tại:</p>
+                <img src="<%= combo.image %>" alt="Ảnh Combo" width="150">
+                <% } %>
+
+                    <h3>Chọn sản phẩm trong combo</h3>
+                    <input type="text" id="search-product" placeholder="Tìm kiếm sản phẩm..."
+                        onkeyup="filterProducts()">
+
+                    <div id="product-list">
+                        <% products.forEach(product=> { %>
+                            <div class="product-item">
+                                <label>
+                                    <%= product.name %> - <%= Number(product.price).toLocaleString("vi-VN") %> VNĐ
+                                </label>
+                                <% let isChecked=combo.products.some(p=> p.id === product.id); %>
+                                    <input type="checkbox" name="product_ids[]" value="<%= product.id %>"
+                                        data-name="<%= product.name %>" data-price="<%= product.price %>" <%=isChecked
+                                        ? "checked" : "" %>>
+                                    <input type="number" name="quantities[]" min="1"
+                                        value="<%= isChecked ? combo.products.find(p => p.id === product.id).quantity : 1 %>"
+                                        <%=isChecked ? "" : "disabled" %>>
+                            </div>
+                            <% }) %>
+                    </div>
+                    <h3>Danh sách sản phẩm trong Combo:</h3>
+                    <ul id="selected-products">
+
+                    </ul>
+
+
+                    <div class="price-summary">
+                        <h3>Giá tổng cộng: <span id="total-price">
+                                <%= Number((combo.price / (1 - combo.discount / 100))).toLocaleString("vi-VN") %> VNĐ
+                            </span></h3>
+                        <label for="discount">Giảm giá (%):</label>
+                        <input type="number" id="discount" name="discount" min="0" max="100" step="0.1"
+                            value="<%= combo.discount %>" oninput="updateFinalPrice()">
+                        <p>Giá Sau Giảm: <span id="final-price">
+                                <%= Number(combo.price).toLocaleString("vi-VN") %> VNĐ</p>
+                        <input type="hidden" id="final-price-input" name="final_price" value="<%= combo.final_price %>">
+                    </div>
+
+                    <button type="submit">💾 Lưu Thay Đổi</button>
+        </form>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function updateFinalPriceOnLoad() {
+                let totalPriceText = document.getElementById("total-price").textContent;
+                let totalPrice = parseFloat(totalPriceText.replace(/\./g, "").replace(" VNĐ", "")) || 0;
+                let discount = parseFloat(document.getElementById("discount").value) || 0;
+                let finalPrice = totalPrice * (1 - discount / 100);
+
+                document.getElementById("final-price").textContent = finalPrice.toLocaleString("vi-VN") + " VNĐ";
+                document.getElementById("final-price-input").value = finalPrice;
+            }
+
+            updateFinalPriceOnLoad();
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            function updateTotalPrice() {
+                let totalPrice = 0;
+                document.querySelectorAll("#product-list .product-item input[type='checkbox']:checked").forEach(checkbox => {
+                    let quantity = checkbox.closest(".product-item").querySelector("input[type='number']").value;
+                    totalPrice += Number(checkbox.dataset.price) * Number(quantity);
+                });
+
+                document.getElementById("total-price").textContent = totalPrice.toLocaleString("vi-VN") + " VNĐ";
+                updateFinalPrice(); // Cập nhật giá sau giảm ngay khi tổng giá thay đổi
+            }
+
+            function updateFinalPrice() {
+                let totalPriceText = document.getElementById("total-price").textContent;
+                let totalPrice = parseFloat(totalPriceText.replace(/\./g, "").replace(" VNĐ", "")) || 0;
+                let discount = parseFloat(document.getElementById("discount").value) || 0;
+                let finalPrice = totalPrice * (1 - discount / 100);
+
+                document.getElementById("final-price").textContent = finalPrice.toLocaleString("vi-VN") + " VNĐ";
+                document.getElementById("final-price-input").value = finalPrice;
+            }
+
+            document.getElementById("discount").addEventListener("input", updateFinalPrice);
+
+            document.querySelectorAll("#product-list .product-item input[type='checkbox']").forEach(checkbox => {
+                let quantityInput = checkbox.closest(".product-item").querySelector("input[type='number']");
+
+                checkbox.addEventListener("change", function () {
+                    quantityInput.disabled = !this.checked;
+                    updateTotalPrice();
+                });
+
+                quantityInput.addEventListener("input", updateTotalPrice);
+            });
+
+            // Gọi updateTotalPrice() để tính toán ngay khi trang load
+            updateTotalPrice();
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            let selectedList = document.getElementById("selected-products");
+
+            // Duyệt qua tất cả sản phẩm để hiển thị danh sách mặc định
+            document.querySelectorAll("#product-list .product-item input[type='checkbox']").forEach(checkbox => {
+                let quantityInput = checkbox.closest(".product-item").querySelector("input[type='number']");
+
+                // Nếu checkbox được chọn sẵn thì thêm vào danh sách
+                if (checkbox.checked) {
+                    addProductToList(checkbox, quantityInput);
+                }
+
+                // Xử lý khi chọn hoặc bỏ chọn sản phẩm
+                checkbox.addEventListener("change", function () {
+                    quantityInput.disabled = !this.checked;
+
+                    if (this.checked) {
+                        addProductToList(this, quantityInput);
+                    } else {
+                        removeProductFromList(this.value);
+                    }
+                    updateTotalPrice();
+                    updateFinalPrice();
+                });
+
+                // Lắng nghe sự kiện thay đổi số lượng
+                quantityInput.addEventListener("input", function () {
+                    let listItem = selectedList.querySelector(`li[data-product-id='${checkbox.value}']`);
+                    if (listItem) {
+                        listItem.querySelector(".quantity").textContent = quantityInput.value;
+                        updateTotalPrice();
+                        updateFinalPrice();
+                    }
+                });
+            });
+
+            // Thêm sản phẩm vào danh sách
+            function addProductToList(checkbox, quantityInput) {
+                let listItem = document.createElement("li");
+                listItem.dataset.productId = checkbox.value;
+                listItem.innerHTML = `${checkbox.dataset.name} - ${Number(checkbox.dataset.price).toLocaleString("vi-VN")} VNĐ (SL: <span class="quantity">${quantityInput.value}</span>)`;
+                selectedList.appendChild(listItem);
+            }
+
+            // Xóa sản phẩm khỏi danh sách
+            function removeProductFromList(productId) {
+                let listItem = selectedList.querySelector(`li[data-product-id='${productId}']`);
+                if (listItem) {
+                    listItem.remove();
+                }
+            }
+
+            // Cập nhật tổng giá
+            function updateTotalPrice() {
+                let totalPrice = 0;
+                document.querySelectorAll("#product-list .product-item input[type='checkbox']:checked").forEach(checkbox => {
+                    let quantity = checkbox.closest(".product-item").querySelector("input[type='number']").value;
+                    totalPrice += Number(checkbox.dataset.price) * Number(quantity);
+                });
+
+                document.getElementById("total-price").textContent = totalPrice.toLocaleString("vi-VN") + " VNĐ";
+            }
+            function updateFinalPrice() {
+                let totalPrice = parseFloat(document.getElementById("total-price").textContent.replace(/\./g, "")) || 0;
+                let discount = parseFloat(document.getElementById("discount").value) || 0;
+                let finalPrice = totalPrice * (1 - discount / 100);
+
+                document.getElementById("final-price").textContent = finalPrice.toLocaleString("vi-VN");
+                document.getElementById("final-price-input").value = finalPrice;
+            }
+
+            // Lọc sản phẩm theo tìm kiếm
+            function filterProducts() {
+                let searchText = document.getElementById("search-product").value.toLowerCase();
+                let products = document.querySelectorAll("#product-list .product-item");
+
+                products.forEach(product => {
+                    let productName = product.querySelector("label").textContent.toLowerCase();
+                    product.style.display = productName.includes(searchText) ? "" : "none";
+                });
+            }
+        });
+    </script>
+
+    <%- include('partials/admin-footer.ejs'); -%>

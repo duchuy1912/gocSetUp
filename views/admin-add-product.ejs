@@ -1,0 +1,110 @@
+<%- include('partials/admin-header.ejs'); -%>
+    <style>
+        .admin-main {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        fieldset {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        legend {
+            font-weight: bold;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+    <main class="admin-main">
+        <h1>Thêm sản phẩm mới</h1>
+
+        <form id="addProductForm" action="/admin/add-product" method="POST" enctype="multipart/form-data">
+            <!-- Thông tin cơ bản -->
+            <fieldset>
+                <legend>Thông tin sản phẩm</legend>
+                <label for="name">Tên sản phẩm:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="description">Mô tả:</label>
+                <textarea id="description" name="description" required></textarea>
+
+                <label for="price">Giá (VNĐ):</label>
+                <input type="number" id="price" name="price" min="0" required>
+
+                <label for="category">Danh mục:</label>
+                <select id="category" name="category_id" required>
+                    <option value="">Chọn danh mục</option>
+                    <% categories.forEach(category=> { %>
+                        <option value="<%= category.id %>">
+                            <%= category.name %>
+                        </option>
+                        <% }) %>
+                </select>
+
+                <label for="stock">Số lượng tồn kho:</label>
+                <input type="number" id="stock" name="stock" min="0" required>
+
+                <label for="image">Ảnh đại diện sản phẩm:</label>
+                <input type="file" id="image" name="image" accept="image/*" required>
+            </fieldset>
+
+            <!-- Chi tiết sản phẩm -->
+            <fieldset>
+                <legend>Chi tiết sản phẩm</legend>
+                <label for="specifications">Thông số kỹ thuật:</label>
+                <textarea id="specifications" name="specifications"></textarea>
+
+                <label for="warranty">Bảo hành:</label>
+                <input type="text" id="warranty" name="warranty">
+
+                <label for="usage_instructions">Hướng dẫn sử dụng:</label>
+                <textarea id="usage_instructions" name="usage_instructions"></textarea>
+
+                <label for="additional_info">Thông tin bổ sung:</label>
+                <textarea id="additional_info" name="additional_info"></textarea>
+            </fieldset>
+
+            <!-- Hình ảnh sản phẩm -->
+            <fieldset>
+                <legend>Thêm hình ảnh sản phẩm</legend>
+                <label for="product_images">Chọn ảnh sản phẩm:</label>
+                <input type="file" id="product_images" name="product_images" accept="image/*" multiple>
+            </fieldset>
+
+            <button type="submit">📦 Thêm sản phẩm</button>
+        </form>
+    </main>
+
+    <%- include('partials/admin-footer.ejs'); -%>

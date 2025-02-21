@@ -1,0 +1,175 @@
+<%- include('partials/header.ejs'); -%>
+    <style>
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            /* border: 1px solid #ddd; */
+            margin-bottom: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .quantity {
+            width: 50px;
+            text-align: center;
+            font-size: 16px;
+            padding: 5px;
+            border: none;
+            outline: none;
+        }
+
+        .quantity-btn {
+            background-color: #f0f0f0;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .quantity-btn:hover {
+            background-color: #ddd;
+        }
+
+        .quantity::-webkit-outer-spin-button,
+        .quantity::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+    <main class="product-detail">
+        <div class="container">
+            <!-- Cột trái: Ảnh sản phẩm -->
+            <div class="product-images">
+                <img id="main-image" src="<%= images.length ? images[0].image_url : 'no-image.jpg' %>"
+                    alt="Ảnh sản phẩm">
+                <div class="thumbnail-list">
+                    <% images.slice(0,5).forEach(img=> { %>
+                        <img class="thumbnail" src="<%= img.image_url %>" alt="Ảnh nhỏ"
+                            onclick="changeImage('<%= img.image_url %>')">
+                        <% }); %>
+                </div>
+            </div>
+            <!-- Cột phải: Thông tin sản phẩm -->
+            <div class="product-info">
+                <h1>
+                    <%= product.name %>
+                </h1>
+                <p class="price">Giá: <strong>
+                        <%= Number(product.price).toLocaleString("vi-VN") %> VNĐ
+                    </strong></p>
+                <p><strong>Mô tả:</strong>
+                    <%= product.description %>
+                </p>
+                <p><strong>Thông số kỹ thuật:</strong>
+                    <%= details.specifications || "Không có thông tin" %>
+                </p>
+                <p><strong>Bảo hành:</strong>
+                    <%= details.warranty || "Không có thông tin" %>
+                </p>
+                <p><strong>Chi tiết bổ sung:</strong>
+                    <%= details.additional_info || "Không có thông tin" %>
+                </p>
+
+                <!-- Nút mua hàng -->
+                <form action="/cart" method="POST">
+                    <input type="hidden" name="product_id" value="<%= product.id %>">
+                    <div class="buttons">
+                        <div class="quantity-selector">
+                            <button type="button" class="btn decrease quantity-btn">➖</button>
+                            <input type="number" name="quantity" class="quantity" value="1" min="1">
+                            <button type="button" class="btn increase quantity-btn">➕</button>
+                        </div>
+
+                        <button type="submit" name="action" value="add-to-cart" class="btn add-to-cart">🛒 Thêm vào giỏ
+                            hàng</button>
+                        <button type="submit" name="action" value="buy-now" class="btn buy-now">⚡ Mua ngay</button>
+                    </div>
+                </form>
+
+
+                <a onclick="history.back()" class="back-link" href="/">← Quay lại</a>
+            </div>
+            <!-- Thông báo -->
+            <!-- Thông báo giỏ hàng -->
+            <!-- <div id="cart-notification" class="cart-notification">Sản phẩm đã được thêm vào giỏ hàng!</div> -->
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const decreaseBtn = document.querySelector(".decrease");
+            const increaseBtn = document.querySelector(".increase");
+            const quantityInput = document.querySelector(".quantity");
+
+            decreaseBtn.addEventListener("click", () => {
+                let value = parseInt(quantityInput.value);
+                if (value > 1) {
+                    quantityInput.value = value - 1;
+                }
+            });
+
+            increaseBtn.addEventListener("click", () => {
+                let value = parseInt(quantityInput.value);
+                quantityInput.value = value + 1;
+            });
+        });
+
+
+        function changeImage(imageUrl) {
+            document.getElementById('main-image').src = imageUrl;
+        }
+
+
+
+        // function showNotification() {
+        //     let notification = document.getElementById("cart-notification");
+        //     notification.classList.add("show");
+
+        //     setTimeout(() => {
+        //         notification.classList.add("hide");
+        //         setTimeout(() => {
+        //             notification.classList.remove("show", "hide");
+        //         }, 500);
+        //     }, 2000);
+        // }
+
+        // // Gọi hàm hiển thị nếu có thông báo từ server
+        // if (message) {
+        //     showNotification();
+        // } 
+    </script>
+
+
+    <style>
+        .cart-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(40, 167, 69, 0.9);
+            /* Màu xanh thành công */
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            display: none;
+            /* Ẩn ban đầu */
+            z-index: 1000;
+            /* Đảm bảo hiển thị trên các phần khác */
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            transition: opacity 0.5s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        .cart-notification.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .cart-notification.hide {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+    </style>
+    <%- include('partials/footer.ejs'); -%>

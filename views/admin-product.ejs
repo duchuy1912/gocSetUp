@@ -1,0 +1,137 @@
+<%- include('partials/admin-header.ejs'); -%>
+    <style>
+        /* body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        } */
+
+        /* .admin-main {
+            width: 80%;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            border-radius: 8px;
+        } */
+        .addProduct{
+            display: inline-block;
+            margin-bottom: 15px;
+            padding: 8px 12px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: 0.3s ease-in-out;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .order-header {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .order-row:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .order-data {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .order-link {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+            /* text-decoration: none; */
+
+        }
+
+        .order-link:hover {
+            /* text-decoration: underline; */
+            color: red;
+        }
+    </style>
+    <main class="admin-main">
+        <div class="container">
+            <h1>Danh sách Đơn hàng</h1>
+            <a class="addProduct" href="/admin/add-product">➕ Thêm Sản Phẩm</a>
+            <input style="font-size: 20px;padding: 5px;margin-bottom: 20px; width: 100%;" type="text" id="search-product" placeholder="Tìm kiếm sản phẩm..." onkeyup="filterProducts()">
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th class="order-header">ID</th>
+                        <th class="order-header">Sản phẩm</th>
+                        <th class="order-header">Giá</th>
+                        <th class="order-header">Tồn kho </th>
+                        <th class="order-header">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% product.forEach(product=> { %>
+                        <tr class="order-row">
+                            <td class="order-data">
+                                <%= product.id %>
+                            </td>
+                            <td class="order-data nameSearch">
+                                <%= product.name %>
+                            </td>
+                            <td class="order-data">
+                                <%= Number(product.price).toLocaleString("vi-VN") %> VNĐ
+                            </td>
+                            <td class="order-data">
+                                <%= product.stock %>
+                            </td>
+                            <td class="order-data">
+                                <a class="order-link" href="/admin/product/edit/<%= product.id %>">✏️ Cập nhật</a> |
+                                <a class="order-link" href="/admin/product/delete/<%= product.id %>" onclick="return confirm('Xóa sản phẩm này?')">❌ Xóa</a> 
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <script>
+        function removeDiacritics(str) {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
+
+        function filterProducts() {
+            let searchText = removeDiacritics(document.getElementById("search-product").value.toLowerCase());
+            let products = document.querySelectorAll(".nameSearch");
+
+            products.forEach(product => {
+                let productName = removeDiacritics(product.textContent.toLowerCase());
+                let row = product.closest("tr"); // Lấy hàng <tr> chứa sản phẩm đó
+
+                if (productName.includes(searchText)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+
+    </script>
+    <%- include('partials/admin-footer.ejs'); -%>

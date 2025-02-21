@@ -1,0 +1,188 @@
+<%- include('partials/header.ejs'); -%>
+    <style>
+        .information_container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .information_title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .information_form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .information_content {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .information_details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .information_details label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .information_details input,
+        .information_details textarea,
+        .information_details select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .information_details textarea {
+            resize: vertical;
+            height: 80px;
+        }
+
+        .btn_save {
+            margin-top: 15px;
+            padding: 10px;
+            background: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn_save:hover {
+            background: #218838;
+        }
+
+        .information_avatar_container {
+            flex: 0.5;
+            text-align: center;
+        }
+
+        .information_avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ddd;
+            margin-bottom: 10px;
+        }
+
+        /* Form upload ảnh */
+        .information_avatar_container form {
+            margin-top: 10px;
+        }
+
+        .information_avatar_container input[type="file"] {
+            display: block;
+            margin: 10px auto;
+        }
+
+        .btn_upload {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn_upload:hover {
+            background: #0056b3;
+        }
+
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .information_content {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .information_details {
+                width: 100%;
+            }
+
+            .information_avatar_container {
+                width: 100%;
+            }
+        }
+    </style>
+
+
+
+
+    <div class="information_container">
+        <h2 class="information_title">Thông tin cá nhân</h2>
+        <!-- Cột hình ảnh bên phải -->
+        <div class="information_avatar_container">
+            <% let avatar=user.avatar || "/img/anh1.jpg" ; %>
+                <img src="<%= avatar %>" alt="Ảnh đại diện" class="information_avatar">
+
+                <!-- Form tải ảnh lên (TÁCH RA) -->
+                <form action="/upload-avatar" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="image" accept="image/*">
+                    <button type="submit" class="btn_upload">Cập nhật ảnh</button>
+                </form>
+
+
+                <p><strong>Ngày tạo tài khoản:</strong>
+                    <%= new Date(user.created_at).toISOString().split('T')[0] %>
+                </p>
+
+                <% if(!user_detail.phone || !user_detail.shipping_address){ %>
+                    <p style="color: red;" class="information_title">Vui lòng nhập đầy đủ thông tin số <b>Điện thoại</b> và <b>Địa
+                        chỉ giao hàng</b></p>
+                    <% } %>
+
+        </div>
+        <!-- Form cập nhật thông tin -->
+        <form action="/update-information" method="POST" class="information_form">
+            <div class="information_content">
+                <!-- Cột thông tin bên trái -->
+                <div class="information_details">
+                    <label><strong>Tên hiển thị:</strong></label>
+                    <input type="text" name="display_name" value="<%= user.display_name %>" required>
+
+                    <label><strong>Email:</strong></label>
+                    <input type="email" name="email" value="<%= user.email %>" disabled>
+
+                    <label><strong>Số điện thoại:</strong></label>
+                    <input type="text" name="phone" value="<%= user_detail?.phone || '' %>">
+
+                    <label><strong>Địa chỉ giao hàng:</strong></label>
+                    <textarea name="shipping_address"><%= user_detail?.shipping_address || '' %></textarea>
+
+                    <label><strong>Ngày sinh:</strong></label>
+                    <input type="date" name="date_of_birth"
+                        value="<%= user_detail?.date_of_birth ? new Date(user_detail.date_of_birth).toISOString().split('T')[0] : '' %>">
+
+                    <label><strong>Giới tính:</strong></label>
+                    <select name="gender">
+                        <option value="Male" <%=user_detail?.gender==='Male' ? 'selected' : '' %>>Nam</option>
+                        <option value="Female" <%=user_detail?.gender==='Female' ? 'selected' : '' %>>Nữ</option>
+                        <option value="Other" <%=user_detail?.gender==='Other' ? 'selected' : '' %>>Khác</option>
+                    </select>
+
+                    <button type="submit" class="btn_save">Lưu thông tin</button>
+                </div>
+            </div>
+        </form>
+
+        <a onclick="history.back()" class="back-link" href="/">← Quay lại</a>
+    </div>
+
+
+    <%- include('partials/footer.ejs'); -%>

@@ -1,0 +1,19 @@
+# Bỏ qua tệp .env
+.env
+
+# Bỏ qua thư mục node_modules
+node_modules/
+
+# Bỏ qua tệp log
+*.log
+
+# Bỏ qua các tệp hệ điều hành
+.DS_Store
+Thumbs.db
+
+# Bỏ qua build folder
+/build
+/dist
+
+# Bỏ qua tệp cá nhân
+*.env.local

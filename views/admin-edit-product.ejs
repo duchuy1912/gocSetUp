@@ -1,0 +1,118 @@
+<%- include('partials/admin-header.ejs'); -%>
+    <style>
+        .admin-main {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        fieldset {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        legend {
+            font-weight: bold;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <main class="admin-main">
+        <h1>Cập nhật sản phẩm</h1>
+
+        <form id="updateProductForm" action="/admin/product/edit/<%= product.id %>" method="POST" enctype="multipart/form-data">
+            <!-- Thông tin cơ bản -->
+            <fieldset>
+                <legend>Thông tin sản phẩm</legend>
+                <label for="name">Tên sản phẩm:</label>
+                <input type="text" id="name" name="name" value="<%= product.name %>" required>
+
+                <label for="description">Mô tả:</label>
+                <textarea id="description" name="description" required><%= product.description %></textarea>
+
+                <label for="price">Giá (VNĐ):</label>
+                <input type="number" id="price" name="price" min="0" value="<%= product.price %>" required>
+
+                <label for="category">Danh mục:</label>
+                <select id="category" name="category_id" required>
+                    <option value="">Chọn danh mục</option>
+                    <% categories.forEach(category => { %>
+                        <option value="<%= category.id %>" <%= category.id === product.category_id ? 'selected' : '' %>>
+                            <%= category.name %>
+                        </option>
+                    <% }) %>
+                </select>
+
+                <label for="stock">Số lượng tồn kho:</label>
+                <input type="number" id="stock" name="stock" min="0" value="<%= product.stock %>" required>
+
+                <label for="image">Ảnh đại diện sản phẩm (hiện tại):</label>
+                <img src="<%= product.image %>" alt="Ảnh sản phẩm" style="width: 100px; height: auto;">
+                <input type="file" id="image" name="image" accept="image/*">
+            </fieldset>
+
+            <!-- Chi tiết sản phẩm -->
+            <fieldset>
+                <legend>Chi tiết sản phẩm</legend>
+                <label for="specifications">Thông số kỹ thuật:</label>
+                <textarea id="specifications" name="specifications"><%= productDetails.specifications %></textarea>
+
+                <label for="warranty">Bảo hành:</label>
+                <input type="text" id="warranty" name="warranty" value="<%= productDetails.warranty %>">
+
+                <label for="usage_instructions">Hướng dẫn sử dụng:</label>
+                <textarea id="usage_instructions" name="usage_instructions"><%= productDetails.usage_instructions %></textarea>
+
+                <label for="additional_info">Thông tin bổ sung:</label>
+                <textarea id="additional_info" name="additional_info"><%= productDetails.additional_info %></textarea>
+            </fieldset>
+
+            <!-- Hình ảnh sản phẩm -->
+            <fieldset>
+                <legend>Cập nhật hình ảnh sản phẩm</legend>
+                
+                <% productImages.forEach(i => { %>
+                    <div style="display: inline-block; text-align: center; margin-right: 10px;">
+                        <img src="<%= i.image_url %>" alt="Ảnh sản phẩm" style="width: 100px; height: auto;">
+                    </div>
+                <% }) %>
+                <label for="product_images">Chọn ảnh sản phẩm mới:</label>
+                <input type="file" id="product_images" name="product_images" accept="image/*" multiple>
+            </fieldset>
+            
+
+            <button type="submit">🔄 Cập nhật sản phẩm</button>
+        </form>
+    </main>
+
+    <%- include('partials/admin-footer.ejs'); -%>

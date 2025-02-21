@@ -1,0 +1,237 @@
+/*
+users
+            id  pk
+            google_id
+            display_name
+            email
+            avatar
+            password
+            created_at
+            role
+
+            Tạo bảng users
+            CREATE TABLE users (
+                id SERIAL PRIMARY KEY,
+                google_id VARCHAR(255) UNIQUE,  -- ID từ Google (nếu đăng nhập bằng Google)
+                display_name VARCHAR(255) NOT NULL,  -- Tên hiển thị của người dùng
+                email VARCHAR(255) UNIQUE NOT NULL,  -- Email duy nhất
+                avatar TEXT,  -- URL ảnh đại diện
+                password TEXT,  -- Mật khẩu (băm nếu đăng ký thông thường)
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Ngày tạo tài khoản
+                role VARCHAR(50) DEFAULT 'user'  -- Vai trò (user/admin)
+            );
+
+            Giải thích cột:
+            id SERIAL PRIMARY KEY: ID tự động tăng.
+            google_id VARCHAR(255) UNIQUE: Dành cho người dùng đăng nhập bằng Google.
+            display_name VARCHAR(255) NOT NULL: Tên hiển thị của người dùng.
+            email VARCHAR(255) UNIQUE NOT NULL: Email duy nhất.
+            avatar TEXT: Ảnh đại diện, có thể để trống.
+            password TEXT: Mật khẩu (sẽ băm nếu đăng ký thông thường).
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP: Ngày tạo tài khoản.
+            role VARCHAR(50) DEFAULT 'user': Quyền của người dùng (user hoặc admin).
+
+
+user_detail
+                id pk,
+                user_id
+                phone
+                shipping_address
+                full_name 
+                date_of_birth 
+                gender
+                created_at
+
+
+                CREATE TABLE user_detail (
+                        id SERIAL PRIMARY KEY,
+                        user_id INT NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+                        phone VARCHAR(15) NOT NULL UNIQUE,
+                        shipping_address TEXT NOT NULL,
+                        full_name VARCHAR(100) NOT NULL,
+                        date_of_birth DATE,
+                        gender VARCHAR(10) CHECK (gender IN ('Male', 'Female', 'Other')),
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                );
+                Giải thích:
+                        id: Khóa chính duy nhất của bảng.
+                        user_id: Liên kết với bảng users để đảm bảo mỗi người dùng chỉ có một bản ghi chi tiết.
+                        phone: Số điện thoại, đảm bảo duy nhất.
+                        shipping_address: Địa chỉ giao hàng, lưu dưới dạng TEXT vì có thể dài.
+                        full_name: Họ tên đầy đủ.
+                        date_of_birth: Ngày sinh.
+                        gender: Giới tính (Male, Female, Other).
+                        created_at: Ngày tạo, mặc định là thời điểm hiện tại.
+                        updated_at: Ngày cập nhật, tự động cập nhật khi có thay đổi.
+
+categories
+            id pk
+            name
+            description 
+            created_at
+
+            Chạy lệnh SQL sau trong PostgreSQL để tạo bảng:
+            CREATE TABLE categories (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(255) NOT NULL UNIQUE,
+            description TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+
+            Giải thích:
+            id SERIAL PRIMARY KEY: ID tự động tăng.
+            name VARCHAR(255) NOT NULL UNIQUE: Tên danh mục, không được trùng.
+            description TEXT: Mô tả danh mục (có thể để trống).
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP: Lưu thời gian tạo.
+
+
+products
+        id pk
+        name
+        description
+        price
+        image
+        category_id (fk)
+        stock
+        created_at
+
+        CREATE TABLE products (
+            id SERIAL PRIMARY KEY, -- Khóa chính, tự động tăng
+            name VARCHAR(255) NOT NULL, -- Tên sản phẩm
+            description TEXT, -- Mô tả sản phẩm
+            price DECIMAL(10,2) NOT NULL CHECK (price >= 0), -- Giá sản phẩm, không âm
+            image TEXT, -- URL ảnh sản phẩm
+            category_id INT REFERENCES categories(id) ON DELETE CASCADE, -- FK đến bảng categories
+            stock INT DEFAULT 0 CHECK (stock >= 0), -- Số lượng tồn kho, mặc định là 0
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Thời gian tạo sản phẩm
+        );
+
+        SERIAL PRIMARY KEY: id tự động tăng.
+        VARCHAR(255) NOT NULL: name bắt buộc nhập.
+        DECIMAL(10,2): Định dạng số tiền, lưu tối đa 10 chữ số, 2 số thập phân.
+        category_id liên kết với bảng categories, có ràng buộc ON DELETE CASCADE (nếu xóa danh mục thì sản phẩm cũng bị xóa).
+        CHECK (price >= 0) và CHECK (stock >= 0) đảm bảo giá và số lượng không âm.
+        CURRENT_TIMESTAMP tự động lưu thời gian tạo.
+
+
+product_details
+        id pk
+        product_id 
+        specifications
+        warranty
+        usage_instructions
+        additional_info
+        created_at
+
+        CREATE TABLE product_details (
+        id SERIAL PRIMARY KEY, -- Khóa chính, tự động tăng
+        product_id INT REFERENCES products(id) ON DELETE CASCADE, -- Khóa ngoại liên kết với bảng products
+        specifications TEXT, -- Thông số kỹ thuật của sản phẩm
+        warranty TEXT, -- Thông tin bảo hành
+        usage_instructions TEXT, -- Hướng dẫn sử dụng
+        additional_info TEXT, -- Thông tin bổ sung khác
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Thời gian tạo bản ghi
+        );
+
+product_images
+        id
+        product_id
+        image_url
+        created_at
+
+        CREATE TABLE product_images (
+        id SERIAL PRIMARY KEY, -- Khóa chính, tự động tăng
+        product_id INT REFERENCES products(id) ON DELETE CASCADE, -- Khóa ngoại liên kết với bảng products
+        image_url TEXT NOT NULL, -- Đường dẫn ảnh sản phẩm
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Thời gian thêm ảnh
+        );
+
+combos
+        Chứa thông tin về các combo
+
+        CREATE TABLE combos (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            description TEXT,
+            price DECIMAL(10, 2) NOT NULL, -- Giá của combo
+            discount DECIMAL(5, 2) DEFAULT 0, -- Giảm giá (%)
+            created_at TIMESTAMP DEFAULT NOW()
+        );
+
+
+
+combo_products
+        Liên kết sản phẩm với combo
+
+        CREATE TABLE combo_products (
+            id SERIAL PRIMARY KEY,
+            combo_id INT REFERENCES combos(id) ON DELETE CASCADE,
+            product_id INT REFERENCES products(id) ON DELETE CASCADE,
+            quantity INT NOT NULL CHECK (quantity > 0) -- Số lượng sản phẩm trong combo
+        );
+
+Lấy danh sách sản phẩm trong combo
+        SELECT c.id AS combo_id, c.name AS combo_name, p.name AS product_name, cp.quantity
+        FROM combos c
+        JOIN combo_products cp ON c.id = cp.combo_id
+        JOIN products p ON cp.product_id = p.id
+        WHERE c.id = 1;
+
+
+        
+cart
+        CREATE TABLE cart (
+                id SERIAL PRIMARY KEY,
+                user_id INT REFERENCES users(id) ON DELETE CASCADE,
+                product_id INT REFERENCES products(id) ON DELETE CASCADE,
+                quantity INT NOT NULL CHECK (quantity > 0),
+                created_at TIMESTAMPTZ DEFAULT NOW()
+            );
+
+
+            
+orders
+            CREATE TABLE orders (
+                id SERIAL PRIMARY KEY, -- Mã đơn hàng
+                user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- Người đặt hàng
+                total_price DECIMAL(10,2) NOT NULL CHECK (total_price >= 0), -- Tổng tiền đơn hàng
+                status VARCHAR(50) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'shipped', 'completed', 'canceled')), -- Trạng thái đơn hàng
+                created_at TIMESTAMPTZ DEFAULT NOW() -- Thời gian đặt hàng
+            );
+            
+
+
+order_items
+                CREATE TABLE order_items (
+                id SERIAL PRIMARY KEY, -- Mã chi tiết đơn hàng
+                order_id INT NOT NULL REFERENCES orders(id) ON DELETE CASCADE, -- FK đến đơn hàng
+                product_id INT NOT NULL REFERENCES products(id) ON DELETE CASCADE, -- FK đến sản phẩm
+                quantity INT NOT NULL CHECK (quantity > 0), -- Số lượng đặt
+                price DECIMAL(10,2) NOT NULL CHECK (price >= 0) -- Giá sản phẩm tại thời điểm đặt hàng
+                );
+
+
+payments
+                CREATE TABLE payments (
+                        id SERIAL PRIMARY KEY, -- Mã thanh toán
+                        order_id INT NOT NULL REFERENCES orders(id) ON DELETE CASCADE, -- FK đến đơn hàng
+                        user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- Người thanh toán
+                        amount DECIMAL(10,2) NOT NULL CHECK (amount >= 0), -- Số tiền thanh toán
+                        payment_method VARCHAR(50) NOT NULL CHECK (payment_method IN ('COD', 'Bank Transfer', 'E-Wallet', 'Credit Card', 'QR Code', 'Installment')), -- Phương thức thanh toán
+                        transaction_id VARCHAR(255) UNIQUE, -- Mã giao dịch từ cổng thanh toán (nếu có)
+                        status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending', 'success', 'failed', 'refunded')), -- Trạng thái thanh toán
+                        created_at TIMESTAMPTZ DEFAULT NOW() -- Thời gian thanh toán
+                    );
+                    
+
+
+
+
+
+
+
+
+
+*/
+
+

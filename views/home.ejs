@@ -1,0 +1,118 @@
+<%- include('partials/header.ejs'); -%>
+
+    <style>
+        #search-product {
+            width: 100%;
+            max-width: 300px;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+            transition: all 0.3s ease-in-out;
+            margin-bottom: 30px;
+            /* margin-top: 30px; */
+        }
+
+        /* Hiệu ứng khi người dùng focus vào ô tìm kiếm */
+        #search-product:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+    </style>
+
+    <section class="banner">
+        <img src="/img/Re-envision-your-workspace-Banner-2-scaled.webp" alt="Khuyến mãi setup bàn làm việc">
+    </section>
+
+    <section class="products">
+        <h2 href="/whatIsStyle" style="text-align: center;"> Setup Theo Phong Cách Phù Hợp<a style="text-decoration: none;color: black;"
+                href="/whatIsStyle">?</a></h2>
+        <div style="justify-content: center; margin: 0 200px;" class="product-list">
+            <% fiveBestProduct.forEach(i=> { %>
+                <div class="product">
+                    <img src="<%= i.image %>" alt="<%= i.name %>">
+                    <p>
+                        <%= i.name %>
+                    </p>
+                    <p>Giá: <%= Number(i.price).toLocaleString("vi-VN") %> VNĐ</p>
+                    <p><strong>Giảm giá:</strong>
+                        <%= i.discount %> %
+                    </p>
+                    <a href="/comboProducts/<%= i.id %>">
+                        <button type="button">Xem Combo Chi Tiết</button>
+                    </a>
+                </div>
+
+                <% }); %>
+        </div>
+    </section>
+    <section id="shop-container" class="shop-container">
+        <!-- Danh mục bên trái -->
+        <aside class="categories">
+            <h3>Danh mục</h3>
+            <ul>
+                <li><a href="/#shop-container">Tất cả</a></li>
+                <% categories.forEach(category=> { %>
+                    <li><a href="/?category=<%= category.id %>#shop-container">
+                            <%= category.name %>
+                        </a></li>
+                    <% }); %>
+            </ul>
+        </aside>
+
+        <!-- Danh sách sản phẩm bên phải -->
+        <div class="products-container">
+            <h2>Tất cả sản phẩm</h2>
+
+
+
+            <input type="text" id="search-product" placeholder="Tìm kiếm sản phẩm..." onkeyup="filterProducts()">
+            <!-- Thanh tìm kiếm -->
+            <!-- <form method="get" action="/searchBox" class="search-container">
+                <input type="text" id="search-box" name="q" placeholder="Tìm kiếm sản phẩm..." value="">
+                <button type="submit">Tìm kiếm</button>
+            </form> -->
+
+            <div class="product-list">
+                <% products.forEach(i=> { %>
+                    <div class="product" data-name="<%= i.name.toLowerCase() %>">
+                        <img src="<%= i.image %>" alt="<%= i.name %>">
+                        <p>
+                            <%= i.name %>
+                        </p>
+                        <p>Giá: <%= Number(i.price).toLocaleString("vi-VN") %> VNĐ</p>
+                        <a style="text-decoration: none;" href="/product/<%= i.id %>">
+                            <button type="button">Xem Chi Tiết</button>
+                            <p style="color: black;">Số lượng : <%= i.stock %></p>
+                        </a>
+                    </div>
+                    <% }); %>
+            </div>
+        </div>
+
+    </section>
+    <script>
+        function removeAccents(str) {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
+
+        function filterProducts() {
+            let searchText = removeAccents(document.getElementById("search-product").value.toLowerCase());
+            let products = document.querySelectorAll("#shop-container .product");
+
+            products.forEach(product => {
+                let productName = removeAccents(product.querySelector("p").textContent.toLowerCase());
+                if (productName.includes(searchText)) {
+                    product.style.display = "";
+                } else {
+                    product.style.display = "none";
+                }
+            });
+        }
+
+    </script>
+
+
+
+    <%- include('partials/footer.ejs'); -%>

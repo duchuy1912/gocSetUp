@@ -1,0 +1,260 @@
+<%- include('partials/admin-header.ejs'); -%>
+    <style>
+        .admin-main {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+            width: 80%;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            /* flex-grow: 1; */
+        }
+
+        h1,
+        h3 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input,
+        textarea,
+        select {
+            padding: 10px;
+            /* width: 100%; */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #product-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .product-item label {
+            flex-grow: 2;
+            /* Tăng diện tích cho tên sản phẩm */
+            font-size: 16px;
+            /* Tăng kích thước chữ */
+        }
+
+        .product-item input[type="checkbox"] {
+            flex-grow: 0;
+            transform: scale(1.2);
+            /* Tăng kích thước checkbox */
+            margin-left: 10px;
+        }
+
+        .product-item input[type="number"] {
+            width: 60px;
+            /* Giới hạn chiều rộng input số lượng */
+            text-align: center;
+        }
+
+
+        ul#selected-products {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        ul#selected-products li {
+            background: #e9ecef;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+
+    <main class="admin-main">
+        <h1>Thêm Combo Mới</h1>
+
+        <form action="/admin/add-combo" method="POST" enctype="multipart/form-data">
+            <label for="name">Tên Combo:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="description">Mô tả:</label>
+            <textarea id="description" name="description"></textarea>
+
+            <label for="image">Ảnh Combo:</label>
+            <input type="file" id="image" name="image" accept="image/*" required>
+
+            <h3>Chọn sản phẩm trong combo</h3>
+
+            <!-- Thanh tìm kiếm -->
+            <input type="text" id="search-product" placeholder="Tìm kiếm sản phẩm..." onkeyup="filterProducts()">
+
+            <div id="product-list">
+                <% products.forEach(product=> { %>
+                    <div class="product-item">
+                        <label>
+                            <%= product.name %> - <%= Number(product.price).toLocaleString("vi-VN") %> VNĐ
+                        </label>
+                        <input type="checkbox" name="product_ids[]" value="<%= product.id %>"
+                            data-name="<%= product.name %>" data-price="<%= product.price %>">
+                        <input type="number" name="quantities[]" min="1" value="1" disabled>
+                    </div>
+                    <% }) %>
+            </div>
+
+            <h3>Danh sách sản phẩm trong Combo:</h3>
+            <ul id="selected-products"></ul>
+
+            <!-- Tổng giá & Giảm giá -->
+            <div class="price-summary">
+                <h3>Giá tổng cộng: <span id="total-price">0 VNĐ</span></h3>
+                <!-- <p>Giá Gốc: <span id="total-price">0</span> VNĐ</p> -->
+                <label style="text-align: center;" for="discount">Giảm giá (%):<input type="number" id="discount"
+                        name="discount" min="0" max="100" step="0.1" value="0" oninput="updateFinalPrice()"></label>
+
+                <!-- <p>Giá Sau Giảm: <span id="final-price">0</span> VNĐ</p> -->
+                <!-- <h3>Giá tổng cộng: <span id="total-price">0 VNĐ</span></h3> -->
+                <p style="text-align: center;">Giá Sau Giảm: <span id="final-price">0</span> VNĐ</p>
+                <input type="hidden" id="final-price-input" name="final_price" value="0">
+
+
+            </div>
+
+            <button type="submit">🛒 Thêm Combo</button>
+        </form>
+    </main>
+
+    <script>
+        document.querySelectorAll("#product-list .product-item input[type='checkbox']").forEach(checkbox => {
+            checkbox.addEventListener("change", function () {
+                let quantityInput = this.closest(".product-item").querySelector("input[type='number']");
+                quantityInput.disabled = !this.checked; // Bật/tắt input dựa vào checkbox
+            });
+        });
+        document.getElementById("product-list").addEventListener("change", function (event) {
+            if (event.target.type === "checkbox") {
+                let checkbox = event.target;
+                let quantityInput = checkbox.closest(".product-item").querySelector('input[type="number"]');
+                let selectedList = document.getElementById("selected-products");
+
+                if (checkbox.checked) {
+                    quantityInput.disabled = false;
+
+                    // Thêm sản phẩm vào danh sách chọn
+                    let listItem = document.createElement("li");
+                    listItem.dataset.productId = checkbox.value;
+                    listItem.innerHTML = `${checkbox.dataset.name} - ${Number(checkbox.dataset.price).toLocaleString("vi-VN")} VNĐ (SL: <span class="quantity">${quantityInput.value}</span>)`;
+                    selectedList.appendChild(listItem);
+
+                    // Lắng nghe sự kiện thay đổi số lượng
+                    quantityInput.addEventListener("input", function () {
+                        listItem.querySelector(".quantity").textContent = quantityInput.value;
+                        updateTotalPrice();
+                        updateFinalPrice();
+                    });
+                } else {
+                    quantityInput.disabled = true;
+                    let listItems = selectedList.querySelectorAll("li");
+                    listItems.forEach(item => {
+                        if (item.dataset.productId === checkbox.value) item.remove();
+                    });
+                }
+            }
+            updateTotalPrice();
+            updateFinalPrice();
+        });
+        function updateTotalPrice() {
+            let totalPrice = 0;
+            document.querySelectorAll("#product-list .product-item input[type='checkbox']:checked").forEach(checkbox => {
+                let quantity = checkbox.closest(".product-item").querySelector("input[type='number']").value;
+                totalPrice += Number(checkbox.dataset.price) * Number(quantity);
+            });
+
+            document.getElementById("total-price").textContent = totalPrice.toLocaleString("vi-VN") + " VNĐ";
+        }
+
+        function updateFinalPrice() {
+            let totalPrice = parseFloat(document.getElementById("total-price").textContent.replace(/\./g, "")) || 0;
+            let discount = parseFloat(document.getElementById("discount").value) || 0;
+            let finalPrice = totalPrice * (1 - discount / 100);
+
+            document.getElementById("final-price").textContent = finalPrice.toLocaleString("vi-VN");
+            document.getElementById("final-price-input").value = finalPrice;
+        }
+
+        function removeDiacritics(str) {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
+
+        function filterProducts() {
+            let searchText = removeDiacritics(document.getElementById("search-product").value.toLowerCase());
+            let products = document.querySelectorAll("#product-list .product-item");
+
+            products.forEach(product => {
+                let productName = removeDiacritics(product.querySelector("label").textContent.toLowerCase());
+                if (productName.includes(searchText)) {
+                    product.style.display = "";
+                } else {
+                    product.style.display = "none";
+                }
+            });
+        }
+
+        // function filterProducts() {
+        //     let searchText = removeAccents(document.getElementById("search-product").value.toLowerCase());
+        //     let products = document.querySelectorAll("#product-list .product-item");
+
+        //     products.forEach(product => {
+        //         let productName = removeAccents(product.querySelector("label").textContent.toLowerCase());
+        //         if (productName.includes(searchText)) {
+        //             product.style.display = "";
+        //         } else {
+        //             product.style.display = "none";
+        //         }
+        //     });
+        // }
+    </script>
+
+    <style>
+
+    </style>
+
+
+
+    <%- include('partials/admin-footer.ejs'); -%>
