@@ -1,0 +1,138 @@
+<%- include('partials/admin-header.ejs'); -%>
+
+
+    <style>
+        /* body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        padding: 20px;
+    } */
+        .payment-container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2,
+        h3 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .total-amount {
+            text-align: right;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .order-note textarea {
+            width: 100%;
+            height: 80px;
+            margin-top: 5px;
+        }
+
+        .confirm-payment {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .confirm-payment:hover {
+            background-color: #218838;
+        }
+    </style>
+    <div class="payment-container">
+        <h2>Thông tin đơn hàng</h2>
+
+        <div class="user-info">
+            <h3>Thông tin người nhận</h3>
+            <p><strong>Họ và tên:</strong>
+                <%= user.display_name %>
+            </p>
+            <p><strong>Số điện thoại:</strong>
+                <%= user.phone %>
+            </p>
+            <p><strong>Địa chỉ giao hàng:</strong>
+                <%= user.shipping_address %>
+            </p>
+            <p><strong>Email:</strong>
+                <%= user.email %>
+            </p>
+            <p><strong>Phương thức thanh toán:</strong>
+                <%= user.payment_method %>
+            </p>
+            <p><strong>Lời nhắn của khách:</strong> <%= user.note ? user.note : "Không có" %></p>
+
+            <p><strong>Ngày đặt:</strong> <%= new Date(user.created_at).toLocaleDateString("vi-VN") %></p>
+
+        </div>
+
+        <div class="cart-items">
+            <h3>Sản phẩm</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tên sản phẩm</th>
+                        <th>Giá</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% item.forEach(item=> { %>
+                        <tr>
+                            <td>
+                                <%= item.name %>
+                            </td>
+                            <td>
+                                <%= Number(item.price).toLocaleString("vi-VN") %> VND
+                            </td>
+                            <td>
+                                <%= item.quantity %>
+                            </td>
+                            <td>
+                                <%= Number(item.price * item.quantity).toLocaleString("vi-VN") %> VND
+                            </td>
+                        </tr>
+                        <% }); %>
+                </tbody>
+            </table>
+            <p><strong>Giá gốc:</strong> <del>
+                    <%= Number((user.total_price / (1 - user.discount / 100))).toLocaleString("vi-VN") %> VNĐ
+                </del></p>
+            <p><strong>Giảm giá:</strong>
+                <%= user.discount %> %
+            </p>
+            <h3 style="color: red;font-size: 25px;" class="total-amount">Tổng tiền: <%=
+                    Number(user.total_price).toLocaleString("vi-VN") %> VND</h3>
+            <a style="    text-decoration: none;" onclick="history.back()" class="back-link" href="javascript:void(0);">← Quay lại</a>
+        </div>
+    </div>
+    <%- include('partials/admin-footer.ejs'); -%>

@@ -1032,7 +1032,7 @@ app.post('/payments-cart', async (req, res) => {
 
     try {
         // Trừ số lượng sản phẩm trong kho
-        // console.log("Dữ liệu nhận được từ form:", req.body);
+        console.log("Dữ liệu nhận được từ form:", req.body);
         const paymentMethod = req.body.payment_method; // Lấy giá trị từ form
         let { product_id, quantity, discount } = req.body;
         const note = req.body.note;
@@ -1145,7 +1145,7 @@ app.post('/payments-cart2', async (req, res) => {
 
     try {
         // Trừ số lượng sản phẩm trong kho
-        console.log("Dữ liệu nhận được từ form:", req.body);
+        console.log("Dữ liệu nhận Combo được từ form:", req.body);
         const paymentMethod = req.body.payment_method;
         const note = req.body.note;
         let { product_id, quantity, discount, combo_price, combo_id } = req.body;
@@ -1172,8 +1172,8 @@ app.post('/payments-cart2', async (req, res) => {
         // Insert cho orders 
         // Tạo đơn hàng và lấy order_id ngay sau khi tạo
         const orderResult = await pool.query(
-            "INSERT INTO orders (user_id, total_price,payment_method,note) VALUES ($1, $2, $3,$4) RETURNING id",
-            [req.user.id, comboPrice,paymentMethod,note]
+            "INSERT INTO orders (user_id, total_price,payment_method,note,discount) VALUES ($1, $2, $3,$4,$5) RETURNING id",
+            [req.user.id, comboPrice,paymentMethod,note,discountID]
         );
         const order_id = orderResult.rows[0].id; // Lấy ID của đơn hàng vừa tạo
 
@@ -1302,38 +1302,6 @@ app.get('/purchase-history-detail/:id', async (req, res) => {
         return res.status(500).send("Lỗi server!");
     }
 })
-// app.get('/purchase-history-detail2/:id', async (req, res) => {
-//     const order_id = req.params.id;
-//     try {
-//         const item = await pool.query(`
-//                             SELECT 
-//                 oi.id AS order_item_id,
-//                 oi.order_id,
-//                 oi.quantity AS order_item_quantity,
-//                 oi.price AS order_item_price,
-//                 p.id AS product_id,
-//                 p.name AS product_name,
-//                 p.description AS product_description,
-//                 p.price AS product_price,
-//                 p.image AS product_image,
-//                 p.category_id AS product_category_id,
-//                 p.stock AS product_stock,
-//                 p.created_at AS product_created_at
-//                 FROM order_items oi
-//                 JOIN products p ON oi.product_id = p.id
-//                 WHERE oi.order_id = $1;
-
-//                 `, [order_id]);
-
-//         res.render('purchase-history-detail.ejs',{
-//             user: req.isAuthenticated() ? req.user : null,
-//             orderItems:item.rows
-//         })      
-//     } catch (error) {
-//         console.error("Lỗi khi Xem lịch sử mua hàng chi tiếttiết :", error);
-//         return res.status(500).send("Lỗi server!");
-//     }
-// })
 app.get('/admin-purchase-history',async (req,res) => {
     try {
         const purchase = await pool.query(`
@@ -1416,7 +1384,48 @@ app.post('/admin/update-status', async (req, res) => {
     }
 });
 
+app.get('/admin-purchase-detail/:id',async (req,res) => {
+    try {
+        const order_id = req.params.id;
+        const user=await pool.query(`
+                                        SELECT 
+                    o.id AS order_id,
+                    o.user_id,
+                    u.display_name,
+                    u.email,
+                    ud.phone,
+                    ud.shipping_address,
+                    o.total_price,
+                    o.created_at,
+                    o.payment_method,
+                    o.note,
+					o.discount
+                FROM orders o
+                JOIN users u ON o.user_id = u.id
+                LEFT JOIN user_detail ud ON u.id = ud.user_id
+				WHERE o.id=$1
+                ORDER BY o.created_at DESC;
+            
+            `,[order_id]);
+        const item=await pool.query(`
+                            SELECT 
+                    order_items.quantity,
+                    order_items.price AS price,
+                    products.name AS name
+                FROM order_items
+                JOIN products ON order_items.product_id = products.id
+                WHERE order_items.order_id = $1;
 
+            `,[order_id]);
+        res.render('admin-purchase-detail.ejs',{
+            user:user.rows[0],
+            item:item.rows
+        })
+    } catch (error) {
+        console.error("Lỗi khi Admin Xem đơn hàng chi tiết  :", error);
+        return res.status(500).send("Lỗi server!");
+    }
+})
 // Khởi động server
 app.listen(3000, () => console.log('Server đang chạy tại http://localhost:3000'));
 

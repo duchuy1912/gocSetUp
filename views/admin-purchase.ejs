@@ -114,6 +114,7 @@
                             <thead>
                                 <tr>
                                     <th class="admin-purchase-header">ID</th>
+                                    <th class="admin-purchase-header">Giá </th>
                                     <th class="admin-purchase-header">Trạng thái</th>
                                     <th class="admin-purchase-header">Hành động</th>
                                 </tr>
@@ -123,6 +124,9 @@
                                     <tr class="admin-purchase-row">
                                         <td class="admin-purchase-data">
                                             <%= purchase.order_id %>
+                                        </td>
+                                        <td class="admin-purchase-data">
+                                            <%= Number(purchase.total_price).toLocaleString("vi-VN") %> VNĐ
                                         </td>
                                         <td class="admin-purchase-data">
                                             <form action="/admin/update-status" method="POST">
@@ -139,7 +143,8 @@
                                             </form>
                                         </td>
                                         <td class="admin-purchase-data">
-                                            <a href="/purchase-history-detail/<%= purchase.order_id %>"
+
+                                            <a href="/admin-purchase-detail/<%= purchase.order_id %>"
                                                 class="purchase-history-button">
                                                 Xem chi tiết
                                             </a>
