@@ -48,6 +48,7 @@
 
         .admin-purchase-select {
             padding: 5px;
+            margin: 5px;
         }
 
         .admin-purchase-button {
@@ -114,8 +115,9 @@
                             <thead>
                                 <tr>
                                     <th class="admin-purchase-header">ID</th>
+                                    <th class="admin-purchase-header">Tổng Tiền </th>
                                     <th class="admin-purchase-header">Trạng thái</th>
-                                    <th class="admin-purchase-header">Hành động</th>
+                                    <th class="admin-purchase-header">Xem chi tiết</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -125,13 +127,16 @@
                                             <%= purchase.order_id %>
                                         </td>
                                         <td class="admin-purchase-data">
+                                            <%= Number(purchase.total_price).toLocaleString("vi-VN") %> VNĐ
+                                        </td>
+                                        <td class="admin-purchase-data">
                                             <%= statusTitles[purchase.status] %>
                                         </td>
 
                                         <td class="admin-purchase-data">
                                             <a href="/admin-purchase-detail/<%= purchase.order_id %>"
                                                 class="purchase-history-button">
-                                                Xem chi tiết
+                                                <ion-icon name="arrow-forward-outline"></ion-icon>
                                             </a>
                                         </td>
                                     </tr>

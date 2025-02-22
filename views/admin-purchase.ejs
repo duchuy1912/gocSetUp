@@ -48,6 +48,7 @@
 
         .admin-purchase-select {
             padding: 5px;
+            margin: 5px;
         }
 
         .admin-purchase-button {
@@ -116,7 +117,7 @@
                                     <th class="admin-purchase-header">ID</th>
                                     <th class="admin-purchase-header">Giá </th>
                                     <th class="admin-purchase-header">Trạng thái</th>
-                                    <th class="admin-purchase-header">Hành động</th>
+                                    <th class="admin-purchase-header">Xem chi tiết</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -146,7 +147,7 @@
 
                                             <a href="/admin-purchase-detail/<%= purchase.order_id %>"
                                                 class="purchase-history-button">
-                                                Xem chi tiết
+                                                <ion-icon name="arrow-forward-outline"></ion-icon>
                                             </a>
                                         </td>
                                     </tr>
