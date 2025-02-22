@@ -102,7 +102,7 @@
 
 
             <div class="admin-tables-container">
-                <% for (let status in groupedOrders) { if (status =='completed' || status =='canceled' ) {
+                <% for (let status in groupedOrders) { if (status=='completed' || status=='canceled' ) {
                     groupedOrders[status].sort((a, b)=> new Date(b.created_at) - new
                     Date(a.created_at));
                     if (groupedOrders[status].length > 0) {
@@ -125,19 +125,9 @@
                                             <%= purchase.order_id %>
                                         </td>
                                         <td class="admin-purchase-data">
-                                            <form action="/admin/update-status" method="POST">
-                                                <input type="hidden" name="order_id" value="<%= purchase.order_id %>">
-                                                <select name="status" class="admin-purchase-select">
-                                                    <% for (let key in statusTitles) { %>
-                                                        <option value="<%= key %>" <%=purchase.status===key ? 'selected'
-                                                            : '' %>>
-                                                            <%= statusTitles[key] %>
-                                                        </option>
-                                                        <% } %>
-                                                </select>
-                                                <button type="submit" class="admin-purchase-button">Cập nhật</button>
-                                            </form>
+                                            <%= statusTitles[purchase.status] %>
                                         </td>
+
                                         <td class="admin-purchase-data">
                                             <a href="/purchase-history-detail/<%= purchase.order_id %>"
                                                 class="purchase-history-button">
