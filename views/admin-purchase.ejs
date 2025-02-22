@@ -80,7 +80,7 @@
         }
     </style>
     <div class="admin-main">
-        <h1 style="text-align: center;" class="admin-purchase-title">Quản lý Lịch sử Mua hàng</h1>
+        <h1 style="text-align: center;" class="admin-purchase-title">Quản lý Mua hàng</h1>
 
         <% const groupedOrders={ 'pending' : [], 'processing' : [], 'shipped' : [], 'completed' : [], 'canceled' : [] };
             purchases.forEach(purchase=> {
@@ -102,9 +102,9 @@
 
 
             <div class="admin-tables-container">
-                <% for (let status in groupedOrders) { if (status =='completed' || status =='canceled' ) {
-                    groupedOrders[status].sort((a, b)=> new Date(b.created_at) - new
-                    Date(a.created_at));
+                <% for (let status in groupedOrders) { if (status !=='completed' && status !=='canceled' ) {
+                    groupedOrders[status].sort((a, b)=> new Date(a.created_at) - new
+                    Date(b.created_at));
                     if (groupedOrders[status].length > 0) {
                     %>
                     <div class="admin-purchase-table-wrapper">

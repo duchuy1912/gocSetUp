@@ -1365,23 +1365,57 @@ app.get('/admin-purchase-history',async (req,res) => {
         return res.status(500).send("Lỗi server!");
     }
 })
-
-app.post('/admin/update-status',async (req,res) => {
+app.get('/admin-purchase',async (req,res) => {
     try {
-        const order_id=req.body.order_id;
-        // console.log("day la orderid"+ order_id);
-        const orderInt = parseInt(order_id, 10);
-        // console.log( "day la orderInt"+orderInt);
+        const purchase = await pool.query(`
+                            SELECT 
+                    o.id AS order_id,
+                    o.user_id,
+                    u.display_name,
+                    u.email,
+                    u.avatar,
+                    ud.phone,
+                    ud.shipping_address,
+                    o.total_price,
+                    o.status,
+                    o.created_at,
+                    o.payment_method,
+                    o.note
+                FROM orders o
+                JOIN users u ON o.user_id = u.id
+                LEFT JOIN user_detail ud ON u.id = ud.user_id
 
-        const status= req.body.status;
-        // console.log("day la status"+status)
-        await pool.query('update orders set status=$1 where id=$2',[status,orderInt]);
-        res.redirect('/admin-purchase-history');
+                ORDER BY o.created_at DESC;
+            `)
+        res.render('admin-purchase.ejs',{
+            user: req.isAuthenticated() ? req.user : null,
+            purchases:purchase.rows
+        })
     } catch (error) {
-        console.error("Lỗi khi Admin Update Status  :", error);
+        console.error("Lỗi khi Admin Xem lịch sử mua hàng :", error);
         return res.status(500).send("Lỗi server!");
     }
 })
+app.post('/admin/update-status', async (req, res) => {
+    try {
+        const order_id = req.body.order_id;
+        const orderInt = parseInt(order_id, 10);
+        const status = req.body.status;
+
+        await pool.query('UPDATE orders SET status = $1 WHERE id = $2', [status, orderInt]);
+
+        // Kiểm tra nếu trạng thái là 'completed' hoặc 'canceled'
+        if (status === 'completed' || status === 'canceled') {
+            return res.redirect('/admin-purchase-history');
+        } else {
+            return res.redirect('/admin-purchase');
+        }
+    } catch (error) {
+        console.error("Lỗi khi Admin Update Status:", error);
+        return res.status(500).send("Lỗi server!");
+    }
+});
+
 
 // Khởi động server
 app.listen(3000, () => console.log('Server đang chạy tại http://localhost:3000'));
