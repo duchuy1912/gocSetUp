@@ -1,0 +1,107 @@
+<%- include('partials/admin-header.ejs'); -%>
+    <style>
+        .admin-main {
+            /* max-width: 1200px; */
+            /* margin: 20px auto; */
+            margin-left: 270px;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .summary {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .summary p {
+            margin: 5px 0;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #fff;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+            transition: 0.3s;
+        }
+    </style>
+    <main class="admin-main">
+        <h1 class="text-center">📊 Báo Cáo Doanh Số</h1>
+
+        <div class="summary">
+            <p><strong>Tổng số đơn hàng hoàn thành:</strong>
+                <%= totalCompletedOrders %>
+            </p>
+            <p><strong>Tổng số sản phẩm đã bán:</strong>
+                <%= totalProductsSold %>
+            </p>
+            <p style="color: red;font-size: 20px;"><strong>Tổng doanh thu:</strong>
+                <%= Number(totalRevenue).toLocaleString("vi-VN") %> VNĐ
+            </p>
+        </div>
+
+        <h2 class="text-center">🔥 Sản phẩm bán chạy</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID Sản phẩm</th>
+                    <th>Tên Sản phẩm</th>
+                    <th>Số lượng bán</th>
+                    <th>Doanh thu</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% products.forEach(product=> { %>
+                    <tr>
+                        <td>
+                            <%= product.product_id %>
+                        </td>
+                        <td>
+                            <%= product.product_name %>
+                        </td>
+                        <td>
+                            <%= product.total_sold %>
+                        </td>
+                        <td>
+                            <%= Number(product.total_revenue).toLocaleString("vi-VN") %> VNĐ
+                        </td>
+                    </tr>
+                    <% }); %>
+            </tbody>
+        </table>
+
+    </main>
+
+    <%- include('partials/admin-footer.ejs'); -%>

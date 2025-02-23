@@ -287,6 +287,7 @@ app.post('/register', async (req, res) => {
         res.send('Lỗi khi đăng ký!');
     }
 });
+// const review="";
 //Sản Phẩm 
 app.get('/product/:id', async (req, res) => {
     const productId = req.params.id;
@@ -311,13 +312,24 @@ app.get('/product/:id', async (req, res) => {
         if (productResult.rows.length === 0) {
             return res.status(404).send('Sản phẩm không tồn tại!');
         }
+        const reviews = await pool.query(
+            `SELECT r.rating, r.comment, u.display_name, r.created_at 
+             FROM reviews r
+             JOIN users u ON r.user_id = u.id
+             WHERE r.product_id = $1
+             ORDER BY r.created_at DESC`,
+            [productId]
+        );
         // req.session.message = "Sản phẩm đã được thêm vào giỏ hàng!";
+        const errorMessageProduct = req.session.errorMessageProduct || ""; // Lấy lỗi nếu có
+        req.session.errorMessageProduct = ""; // Xóa lỗi sau khi lấy
         res.render('product-detail.ejs', {
             user: req.isAuthenticated() ? req.user : null,
             product: productResult.rows[0],
             images: imagesResult.rows,
-            details: detailsResult.rows[0] || {} // Nếu không có, trả về object rỗng
-            // message:req.message
+            details: detailsResult.rows[0] || {} ,
+            reviews:reviews.rows,
+            errorMessageProduct
         });
     } catch (err) {
         console.error(err);
@@ -421,7 +433,7 @@ app.post('/admin/add-product', upload.fields([{ name: "image" }, { name: "produc
         const productResult = await pool.query(`
             INSERT INTO products (name, description, price, image, category_id, stock) 
             VALUES ($1, $2, $3, $4, $5, $6) RETURNING id
-        `, [name, description, price, image, category_id, stock]);
+        `, [name, description, price, `/img/${image}`, category_id, stock]);
 
         const productId = productResult.rows[0].id;
 
@@ -1426,6 +1438,90 @@ app.get('/admin-purchase-detail/:id',async (req,res) => {
         return res.status(500).send("Lỗi server!");
     }
 })
+app.post('/reviews', async (req, res) => {
+    if (!req.user) {
+        return res.redirect('/login'); // Chuyển hướng nếu chưa đăng nhập
+    }
+    try {
+        
+        const {  product_id, rating, comment } = req.body;
+
+        // Kiểm tra nếu sản phẩm có trong đơn hàng hoàn thành
+        const orderCheck = await pool.query(
+            `SELECT o.status 
+             FROM orders o
+             JOIN order_items oi ON o.id = oi.order_id
+             WHERE o.user_id = $1 AND oi.product_id = $2
+             LIMIT 1`,
+            [req.user.id, product_id]
+        );
+        //errorMessage: "Bạn chỉ có thể đánh giá khi đơn hàng đã hoàn thành."
+        if (orderCheck.rows.length === 0 || orderCheck.rows[0].status !== 'completed') {
+            // review="Bạn chỉ có thể đánh giá khi đơn hàng đã hoàn thành.";
+            req.session.errorMessageProduct = "Bạn chỉ có thể đánh giá khi đơn hàng đã hoàn thành.";
+            return  res.redirect(`/product/${product_id}`);
+        }
+
+        // Thêm đánh giá nếu hợp lệ
+        await pool.query(
+            `INSERT INTO reviews (user_id, product_id, rating, comment) 
+             VALUES ($1, $2, $3, $4)`,
+            [req.user.id, product_id, rating, comment]
+        );
+
+        res.redirect(`/product/${product_id}`);
+    } catch (error) {
+        console.error("Lỗi khi thêm đánh giá:", error);
+        res.status(500).json({ error: "Lỗi server!" });
+    }
+});
+
+app.get('/admin-sales-report', async (req, res) => {
+    try {
+        // Truy vấn tổng số đơn hàng hoàn thành, tổng sản phẩm đã bán, tổng doanh thu
+        const summaryResult = await pool.query(`
+                        SELECT 
+                SUM(oi.quantity) AS total_products_sold, 
+                COUNT(DISTINCT o.id) AS total_completed_orders, 
+                COALESCE(SUM(o.total_price), 0) AS total_revenue
+            FROM orders o
+            JOIN (
+                SELECT order_id, SUM(quantity) AS quantity
+                FROM order_items
+                GROUP BY order_id
+            ) oi ON o.id = oi.order_id
+            WHERE o.status = 'completed';
+
+        `);
+        const summary = summaryResult.rows[0];
+
+        // Truy vấn danh sách sản phẩm đã bán
+        const productResult = await pool.query(`
+            SELECT 
+                p.id AS product_id,
+                p.name AS product_name,
+                SUM(oi.quantity) AS total_sold,
+                SUM(oi.quantity * oi.price) AS total_revenue
+            FROM orders o
+            JOIN order_items oi ON o.id = oi.order_id
+            JOIN products p ON oi.product_id = p.id
+            WHERE o.status = 'completed'
+            GROUP BY p.id, p.name
+            ORDER BY total_sold DESC
+        `);
+
+        res.render('admin-sales-report.ejs', {
+            totalCompletedOrders: summary.total_completed_orders || 0,
+            totalProductsSold: summary.total_products_sold || 0,
+            totalRevenue: summary.total_revenue || 0,
+            products: productResult.rows
+        });
+    } catch (error) {
+        console.error('Lỗi lấy báo cáo doanh số:', error);
+        res.status(500).send('Lỗi server');
+    }
+});
+
 // Khởi động server
 app.listen(3000, () => console.log('Server đang chạy tại http://localhost:3000'));
 

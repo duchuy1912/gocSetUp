@@ -225,8 +225,16 @@ payments
                     
 
 
-
-
+reviews
+                    CREATE TABLE reviews (
+                        id SERIAL PRIMARY KEY,
+                        user_id INT REFERENCES users(id) ON DELETE CASCADE,
+                        product_id INT REFERENCES products(id) ON DELETE CASCADE,
+                        rating INT CHECK (rating BETWEEN 1 AND 5),
+                        comment TEXT,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    );
+                    
 
 
 
