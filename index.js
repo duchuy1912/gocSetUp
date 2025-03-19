@@ -24,7 +24,8 @@ const pool = new Pool({
     database: process.env.DB_NAME,
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
-    ssl: { rejectUnauthorized: false }
+    ssl: process.env.DB_HOST !== "localhost" ? { rejectUnauthorized: false } : false, // SSL bắt buộc khi deploy
+    // ssl: { rejectUnauthorized: false }
 });
 
 // Cấu hình session
@@ -394,11 +395,40 @@ app.get("/searchBox", async (req, res) => {
 
 });
 //Quản lýlý
-app.get('/admin', (req, res) => {
+app.get('/admin',async (req, res) => {
+    try {
+        const purchase = await pool.query(`
+                            SELECT 
+                    o.id AS order_id,
+                    o.user_id,
+                    u.display_name,
+                    u.email,
+                    u.avatar,
+                    ud.phone,
+                    ud.shipping_address,
+                    o.total_price,
+                    o.status,
+                    o.created_at,
+                    o.payment_method,
+                    o.note
+                FROM orders o
+                JOIN users u ON o.user_id = u.id
+                LEFT JOIN user_detail ud ON u.id = ud.user_id
 
-    res.render("admin.ejs", {
-        user: req.isAuthenticated() ? req.user : null
-    });
+                ORDER BY o.created_at DESC;
+            `)
+        res.render('admin-purchase.ejs',{
+            user: req.isAuthenticated() ? req.user : null,
+            purchases:purchase.rows
+        })
+    } catch (error) {
+        console.error("Lỗi khi Admin Xem lịch sử mua hàng :", error);
+        return res.status(500).send("Lỗi server!");
+    }
+
+    // res.render("admin.ejs", {
+    //     user: req.isAuthenticated() ? req.user : null
+    // });
 });
 
 //Thêm product 
