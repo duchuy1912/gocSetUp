@@ -9,6 +9,7 @@
 - 📦 **Order Management** – Track order history and status after placing an order.
 - 🔍 **Product Search & Filtering** – Easily search by product name, category, brand, or price range.
 - 👨‍💼 **Admin Dashboard** – Admins can manage users, products, and orders efficiently.
+- ...
 
 ## 🛠️ Tech Stack
 
@@ -31,6 +32,22 @@
 
 ## 📷 Screenshots
 
-> Add interface screenshots here: homepage, cart, login with Google, admin panel, etc.
+- Home
 > ![Home](./public/img/anhlocal1.png)
+- Login
+> ![Home](./public/img/anhlocaldangnhap.png)
+- Item
+> ![Home](./public/img/anhlocalsanpham.png)
+- Detali Item
+> ![Home](./public/img/anhlocaldetaliItem.png)
+- Cart 
+> ![Home](./public/img/anhlocalcart.png)
+- Pay 
+> ![Home](./public/img/anhlocalPay.png)
+- Purchase History 
+> ![Home](./public/img/anhlocalPurchaseHistory.png)
 
+- Purchasing Management(Admin)
+> ![Home](./public/img/admin1.png.png)
+- Purchase History(Admin)
+> ![Home](./public/img/admin2.png.png)
