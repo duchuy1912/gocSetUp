@@ -32,5 +32,5 @@
 ## 📷 Screenshots
 
 > Add interface screenshots here: homepage, cart, login with Google, admin panel, etc.
-> 
+> ![Homepage](./public/img/1739743117722-vn-11134207-7r98o-lqro9t1lpexe64.webp)
 
