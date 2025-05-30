@@ -22,7 +22,6 @@
 - PostgreSQL (relational database)
 - Multer (for uploading product images)
 - OAuth 2.0 (Google Login)
-- Nodemailer (for sending order confirmation emails)
 
 ## ⚠️ Limitations
 
@@ -48,6 +47,12 @@
 > ![Home](./public/img/anhlocalPurchaseHistory.png)
 
 - Purchasing Management(Admin)
-> ![Home](./public/img/admin1.png.png)
+> ![Home](./public/img/admin1.png)
 - Purchase History(Admin)
-> ![Home](./public/img/admin2.png.png)
+> ![Home](./public/img/admin2.png)
+- Products(Admin)
+> ![Home](./public/img/admin4.png)
+- Combo(Admin)
+> ![Home](./public/img/admin5.png)
+- Revenue(Admin)
+> ![Home](./public/img/admin6.png)
